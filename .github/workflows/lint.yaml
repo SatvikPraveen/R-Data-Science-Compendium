@@ -1,0 +1,127 @@
+# R Data Science Portfolio - Code Linting Workflow
+# ================================================
+# Automated code quality checking using lintr
+
+name: lint
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    name: Code Linting
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Setup R dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::lintr
+            any::styler
+          needs: check
+
+      - name: Create lintr config
+        run: |
+          cat > .lintr << 'EOF'
+          linters: linters_with_defaults(
+            line_length_linter(120),
+            assignment_linter = NULL,
+            cyclocomp_linter = NULL,
+            object_usage_linter = NULL,
+            commented_code_linter = NULL
+          )
+          exclusions: list(
+            "renv/",
+            "tests/testthat.R"
+          )
+          EOF
+
+      - name: Lint R code
+        run: |
+          # Create comprehensive linting report
+          lint_results <- lintr::lint_package(
+            path = ".",
+            linters = lintr::linters_with_defaults(
+              line_length_linter = lintr::line_length_linter(120),
+              assignment_linter = NULL,
+              cyclocomp_linter = NULL,
+              object_usage_linter = NULL,
+              commented_code_linter = NULL
+            )
+          )
+
+          # Print results
+          print(lint_results)
+
+          # Save results to file
+          writeLines(
+            capture.output(print(lint_results)),
+            "lint-results.txt"
+          )
+
+          # Check if there are any linting errors
+          if (length(lint_results) > 0) {
+            cat("Linting issues found:\n")
+            for (i in seq_along(lint_results)) {
+              cat(sprintf("%s:%d:%d: %s: %s\n",
+                  lint_results[[i]]$filename,
+                  lint_results[[i]]$line_number,
+                  lint_results[[i]]$column_number,
+                  lint_results[[i]]$type,
+                  lint_results[[i]]$message
+              ))
+            }
+            
+            # Fail if critical issues found
+            critical_issues <- sapply(lint_results, function(x) x$type %in% c("error", "warning"))
+            if (any(critical_issues)) {
+              stop("Critical linting issues found!")
+            }
+          } else {
+            cat("No linting issues found! ✓\n")
+          }
+        shell: Rscript {0}
+
+      - name: Check code style
+        run: |
+          # Check if code follows style guide
+          style_issues <- styler::style_pkg(
+            path = ".",
+            style = styler::tidyverse_style,
+            dry = "on"
+          )
+
+          if (any(style_issues$changed)) {
+            cat("Style issues found in the following files:\n")
+            changed_files <- names(style_issues$changed)[style_issues$changed]
+            cat(paste(changed_files, collapse = "\n"))
+            cat("\n\nRun styler::style_pkg() to fix these issues.\n")
+          } else {
+            cat("Code style looks good! ✓\n")
+          }
+        shell: Rscript {0}
+
+      - name: Upload lint results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: lint-results
+          path: |
+            lint-results.txt
+            .lintr

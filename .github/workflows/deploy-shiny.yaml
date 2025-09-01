@@ -1,0 +1,176 @@
+# R Data Science Portfolio - Shiny App Deployment Workflow
+# =========================================================
+# Deploy Shiny applications to shinyapps.io or other platforms
+
+name: deploy-shiny
+
+on:
+  push:
+    branches: [main]
+    paths: ["shiny-apps/**"]
+  workflow_dispatch:
+    inputs:
+      app_name:
+        description: "Specific app to deploy (leave empty for all)"
+        required: false
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    name: Deploy Shiny Apps
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      SHINYAPPS_TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
+      SHINYAPPS_SECRET: ${{ secrets.SHINYAPPS_SECRET }}
+      SHINYAPPS_ACCOUNT: ${{ secrets.SHINYAPPS_ACCOUNT }}
+
+    strategy:
+      matrix:
+        app:
+          - data-explorer
+          - ml-model-comparison
+          - portfolio-dashboard
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Setup R dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::rsconnect
+            any::shiny
+            any::shinydashboard
+            any::DT
+            any::plotly
+            any::dplyr
+            any::ggplot2
+          needs: check
+
+      - name: System dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libcurl4-openssl-dev \
+            libssl-dev \
+            libxml2-dev \
+            libharfbuzz-dev \
+            libfribidi-dev \
+            libfreetype6-dev \
+            libpng-dev \
+            libtiff5-dev \
+            libjpeg-dev
+
+      - name: Configure rsconnect
+        run: |
+          rsconnect::setAccountInfo(
+            name = Sys.getenv("SHINYAPPS_ACCOUNT"),
+            token = Sys.getenv("SHINYAPPS_TOKEN"),
+            secret = Sys.getenv("SHINYAPPS_SECRET")
+          )
+        shell: Rscript {0}
+
+      - name: Check if app exists
+        id: check-app
+        run: |
+          app_path="shiny-apps/${{ matrix.app }}"
+          if [[ -d "$app_path" ]]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "App ${{ matrix.app }} found at $app_path"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "App ${{ matrix.app }} not found, skipping"
+          fi
+
+      - name: Deploy to shinyapps.io
+        if: steps.check-app.outputs.exists == 'true'
+        run: |
+          app_path <- "shiny-apps/${{ matrix.app }}"
+          app_name <- "${{ matrix.app }}"
+
+          # Check if specific app was requested
+          requested_app <- "${{ github.event.inputs.app_name }}"
+          if (requested_app != "" && requested_app != app_name) {
+            cat("Skipping", app_name, "- not the requested app\n")
+            quit(status = 0)
+          }
+
+          cat("Deploying app:", app_name, "\n")
+          cat("App path:", app_path, "\n")
+
+          # Verify app directory structure
+          if (!file.exists(file.path(app_path, "app.R")) && 
+              !(file.exists(file.path(app_path, "ui.R")) && 
+                file.exists(file.path(app_path, "server.R")))) {
+            stop("Invalid Shiny app structure in ", app_path)
+          }
+
+          # Deploy the application
+          rsconnect::deployApp(
+            appDir = app_path,
+            appName = paste0("r-data-science-", gsub("_", "-", app_name)),
+            account = Sys.getenv("SHINYAPPS_ACCOUNT"),
+            forceUpdate = TRUE,
+            launch.browser = FALSE
+          )
+
+          cat("Successfully deployed", app_name, "to shinyapps.io\n")
+        shell: Rscript {0}
+
+      - name: Test deployed app
+        if: steps.check-app.outputs.exists == 'true'
+        run: |
+          # Wait for deployment to be ready
+          sleep 30
+
+          # Test if the app is accessible
+          app_url="https://${{ secrets.SHINYAPPS_ACCOUNT }}.shinyapps.io/r-data-science-${{ matrix.app }}"
+
+          echo "Testing app at: $app_url"
+
+          # Simple HTTP check
+          response=$(curl -s -o /dev/null -w "%{http_code}" "$app_url" || echo "000")
+
+          if [[ "$response" == "200" ]]; then
+            echo "✓ App is accessible and responding"
+          else
+            echo "⚠ App returned HTTP status: $response"
+            echo "This might be normal if the app takes time to start"
+          fi
+
+  notify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: always()
+
+    name: Notify Deployment Status
+
+    steps:
+      - name: Deployment Summary
+        run: |
+          echo "## Shiny App Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| App | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ needs.deploy.result }}" == "success" ]]; then
+            echo "| All Apps | ✅ Deployed Successfully |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Apps are available at:" >> $GITHUB_STEP_SUMMARY
+            echo "- [Data Explorer](https://${{ secrets.SHINYAPPS_ACCOUNT }}.shinyapps.io/r-data-science-data-explorer)" >> $GITHUB_STEP_SUMMARY
+            echo "- [ML Model Comparison](https://${{ secrets.SHINYAPPS_ACCOUNT }}.shinyapps.io/r-data-science-ml-model-comparison)" >> $GITHUB_STEP_SUMMARY
+            echo "- [Portfolio Dashboard](https://${{ secrets.SHINYAPPS_ACCOUNT }}.shinyapps.io/r-data-science-portfolio-dashboard)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Some Apps | ❌ Deployment Failed |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Check the logs above for detailed error information." >> $GITHUB_STEP_SUMMARY
+          fi

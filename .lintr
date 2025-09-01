@@ -1,0 +1,96 @@
+# R Data Science Portfolio - Linting Configuration
+# =================================================
+# Configure lintr for consistent code style and quality
+
+linters: linters_with_defaults(
+  # Line length (reasonable for data science code)
+  line_length_linter = line_length_linter(120),
+  
+  # Assignment operators (allow both <- and =)
+  assignment_linter = NULL,
+  
+  # Cyclomatic complexity (disable for data analysis scripts)
+  cyclocomp_linter = NULL,
+  
+  # Object usage (can be noisy in exploratory analysis)
+  object_usage_linter = NULL,
+  
+  # Commented code detection (disable for teaching examples)
+  commented_code_linter = NULL,
+  
+  # Trailing whitespace
+  trailing_whitespace_linter = trailing_whitespace_linter(),
+  
+  # Trailing blank lines
+  trailing_blank_lines_linter = trailing_blank_lines_linter(),
+  
+  # Quotes consistency
+  quotes_linter = quotes_linter(delimiter = '"'),
+  
+  # Comma spacing
+  commas_linter = commas_linter(),
+  
+  # Infix operator spacing
+  infix_spaces_linter = infix_spaces_linter(),
+  
+  # Function spacing
+  function_left_parentheses_linter = function_left_parentheses_linter(),
+  
+  # Brace formatting
+  open_curly_linter = open_curly_linter(allow_single_line = TRUE),
+  closed_curly_linter = closed_curly_linter(allow_single_line = TRUE),
+  
+  # Semicolon usage
+  semicolon_linter = semicolon_linter(),
+  
+  # Sequence linter (prefer seq_len over 1:n)
+  seq_linter = seq_linter(),
+  
+  # Package loading
+  library_call_linter = library_call_linter(),
+  
+  # T/F usage (prefer TRUE/FALSE)
+  T_and_F_symbol_linter = T_and_F_symbol_linter(),
+  
+  # Absolute paths
+  absolute_path_linter = absolute_path_linter(),
+  
+  # Non-portable file paths
+  nonportable_path_linter = nonportable_path_linter(),
+  
+  # Pipe continuation
+  pipe_continuation_linter = pipe_continuation_linter(),
+  
+  # Undesirable operators/functions
+  undesirable_operator_linter = undesirable_operator_linter(),
+  undesirable_function_linter = undesirable_function_linter()
+)
+
+# Files and directories to exclude from linting
+exclusions: list(
+  # Generated or external files
+  "renv/",
+  "packrat/",
+  "inst/doc/",
+  "docs/",
+  
+  # Test files (less strict linting)
+  "tests/testthat.R",
+  
+  # Data directories
+  "data/",
+  "data-raw/",
+  
+  # Build artifacts
+  "man/",
+  ".Rcheck/",
+  
+  # Configuration files
+  ".Rprofile",
+  
+  # Specific files that may have different style requirements
+  list.files("analysis/", pattern = "\\.R$", full.names = TRUE, recursive = TRUE),
+  
+  # Shiny apps (may have different style conventions)
+  list.files("shiny-apps/", pattern = "\\.R$", full.names = TRUE, recursive = TRUE)
+)

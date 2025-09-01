@@ -1,0 +1,29 @@
+Package: RDataScienceCompendium
+Title: Comprehensive R Data Science Portfolio
+Version: 1.0.0
+Authors@R: 
+    person("Portfolio", "Developer", , "developer@example.com", role = c("aut", "cre"))
+Description: A comprehensive showcase of R programming skills through practical 
+    data science applications, covering everything from basic syntax to advanced 
+    statistical modeling and machine learning.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Depends: 
+    R (>= 4.2.0)
+Imports:
+    dplyr,
+    ggplot2,
+    readr,
+    tidyr,
+    caret,
+    shiny,
+    plotly,
+    DT
+Suggests: 
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+Config/testthat/edition: 3
+VignetteBuilder: knitr
