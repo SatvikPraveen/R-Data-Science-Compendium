@@ -1,0 +1,346 @@
+# R Data Science Portfolio - Git Ignore Configuration
+# =====================================================
+
+# R Files
+# -------
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+.RDataTmp
+
+# User-specific files
+.Ruserdata
+
+# Example code in package build process
+*-Ex.R
+
+# Output files from R CMD build
+/*.tar.gz
+
+# Output files from R CMD check
+/*.Rcheck/
+
+# RStudio files
+.Rproj.user/
+*.Rproj
+
+# produced vignettes
+vignettes/*.html
+vignettes/*.pdf
+
+# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
+.httr-oauth
+
+# knitr and R markdown default cache directories
+*_cache/
+/cache/
+
+# Temporary files created by R markdown
+*.utf8.md
+*.knit.md
+
+# R Environment Variables
+.Renviron
+
+# pkgdown site
+docs/
+
+# translation temp files
+po/*~
+
+# RStudio Connect folder
+rsconnect/
+
+# Shiny App Dependencies
+# ----------------------
+# Shiny session info
+.shiny_history
+
+# Shiny app logs
+*.log
+
+# Machine Learning Models
+# -----------------------
+# Model files
+*.rds
+*.RDS
+models/
+model_outputs/
+
+# Data Files
+# ----------
+# Large data files
+*.csv
+*.xlsx
+*.xls
+*.tsv
+*.json
+*.xml
+*.parquet
+*.feather
+*.sqlite
+*.db
+
+# Keep example/sample data
+!data/sample_*
+!data/example_*
+!data/demo_*
+
+# Raw data directories
+data/raw/
+data/external/
+data/temp/
+
+# Processed data (keep structure, ignore contents)
+data/processed/*
+!data/processed/.gitkeep
+
+# Cache directories
+cache/
+.cache/
+
+# Output and Results
+# ------------------
+# Output directories
+output/
+results/
+reports/
+plots/
+figures/
+
+# Keep directories with .gitkeep
+!output/.gitkeep
+!results/.gitkeep
+!reports/.gitkeep
+!plots/.gitkeep
+!figures/.gitkeep
+
+# Analysis outputs
+*.html
+*.pdf
+*.docx
+*.pptx
+
+# Keep README and documentation
+!README.html
+!README.pdf
+!**/README.*
+
+# Development and Testing
+# -----------------------
+# Package development
+/Meta/
+/doc/
+/src/*.o
+/src/*.so
+/src/*.dll
+
+# Testing outputs
+testthat/
+test_results/
+
+# Coverage reports
+coverage/
+*.gcov
+*.gcno
+*.gcda
+
+# Environment and Dependencies
+# ----------------------------
+# renv (keep lock file, ignore library)
+renv/library/
+renv/local/
+renv/cellar/
+renv/lock.R
+renv/python/
+renv/staging/
+
+# Keep renv configuration
+!renv.lock
+!renv/activate.R
+!renv/settings.dcf
+!renv/.gitignore
+
+# Conda environments
+.conda/
+conda-meta/
+
+# Python virtual environments (if using reticulate)
+venv/
+env/
+.env/
+
+# Operating System
+# ----------------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# IDE and Editor Files
+# --------------------
+# VSCode
+.vscode/
+*.code-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.netrwhist
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# PyCharm / IntelliJ
+.idea/
+*.iml
+
+# Credentials and Secrets
+# -----------------------
+# API keys and secrets
+.env
+.env.local
+.env.*.local
+secrets.R
+config/secrets/
+credentials/
+
+# Database credentials
+database.yml
+db_config.R
+
+# Web and Deployment
+# ------------------
+# Node modules (if using any JS tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker
+Dockerfile.local
+docker-compose.override.yml
+.dockerignore
+
+# Kubernetes
+*.kubeconfig
+
+# Cloud deployment
+.gcloudignore
+.azure/
+.aws/
+
+# Performance and Profiling
+# --------------------------
+# Profiling outputs
+Rprof.out
+*.prof
+
+# Benchmarking results
+benchmark_results/
+
+# Memory dumps
+*.rdb
+*.dump
+
+# Logs and Monitoring
+# -------------------
+# Application logs
+logs/
+*.log
+
+# Error logs
+error.log
+debug.log
+
+# Monitoring data
+monitoring/
+
+# Temporary and Backup Files
+# ---------------------------
+# Temporary files
+tmp/
+temp/
+.tmp/
+.temp/
+
+# Backup files
+*.bak
+*.backup
+*~
+*.orig
+
+# Auto-generated files
+*_autogen.R
+*_generated.R
+
+# Lock files (except renv.lock)
+*.lock
+!renv.lock
+!package-lock.json
+
+# Local Configuration
+# -------------------
+# Local development settings
+.local/
+local/
+config/local/
+
+# User-specific configurations
+.user_config
+user_settings.R
+
+# Project-specific ignores
+# ------------------------
+# Add any project-specific files here

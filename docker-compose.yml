@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  r-dev:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8787:8787"
+      - "3838:3838"
+    volumes:
+      - .:/project
+    environment:
+      - DISABLE_AUTH=true
+      - ROOT=TRUE
