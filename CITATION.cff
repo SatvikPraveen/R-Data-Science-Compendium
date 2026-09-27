@@ -1,0 +1,44 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+type: software
+title: "RDataScienceCompendium: Reproducible Resampling, Simulation and Model-Evaluation Methods"
+abstract: >-
+  An R package and research compendium providing tested implementations of
+  nonparametric bootstrap confidence intervals, permutation tests,
+  standardised effect sizes with exact intervals, a reproducible
+  simulation-study framework with Monte Carlo standard errors, and honest
+  model evaluation via stratified, grouped and nested cross-validation.
+authors:
+  - family-names: Praveen
+    given-names: Satvik
+    email: satvikpraveen707@gmail.com
+version: 0.2.0
+date-released: 2026-09-27
+license: MIT
+repository-code: "https://github.com/SatvikPraveen/R-Data-Science-Compendium"
+url: "https://satvikpraveen.github.io/R-Data-Science-Compendium/"
+keywords:
+  - R
+  - bootstrap
+  - permutation test
+  - effect size
+  - simulation study
+  - cross-validation
+  - reproducible research
+references:
+  - type: article
+    authors:
+      - family-names: Morris
+        given-names: Tim P.
+      - family-names: White
+        given-names: Ian R.
+      - family-names: Crowther
+        given-names: Michael J.
+    title: "Using simulation studies to evaluate statistical methods"
+    journal: "Statistics in Medicine"
+    year: 2019
+    volume: 38
+    issue: 11
+    start: 2074
+    end: 2102
+    doi: 10.1002/sim.8086
