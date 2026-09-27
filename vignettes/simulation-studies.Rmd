@@ -1,0 +1,161 @@
+---
+title: "Designing and reporting simulation studies"
+output: rmarkdown::html_vignette
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{Designing and reporting simulation studies}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 6.5,
+                      fig.height = 4)
+```
+
+```{r setup}
+library(RDataScienceCompendium)
+```
+
+Simulation studies are how statisticians find out whether a method works. Like
+any experiment, they need a pre-specified design, an adequate number of
+replicates, and uncertainty statements about their results. This vignette
+follows the ADEMP structure of @morris2019 and runs a small study. The
+full-size version, with more replicates and scenarios, is in the `analysis/`
+directory of the repository.
+
+## A: Aims
+
+To compare the coverage of four 95% confidence intervals for a population mean
+when the data are right-skewed and the sample is small.
+
+## D: Data-generating mechanisms
+
+Samples of size $n \in \{10, 40\}$ from a log-normal distribution with
+$\log X \sim N(0, \sigma^2)$, with $\sigma \in \{0.5, 1\}$ (moderate and
+strong skew). That is a $2 \times 2$ factorial design.
+
+```{r dgm}
+scenarios <- expand.grid(n = c(10, 40), sigma = c(0.5, 1))
+generate <- function(n, sigma) rlnorm(n, meanlog = 0, sdlog = sigma)
+scenarios
+```
+
+## E: Estimand
+
+The population mean $\theta = \exp(\sigma^2/2)$. It varies by scenario, so we
+store it as a column.
+
+## M: Methods
+
+1. The Student $t$ interval.
+2. The bootstrap percentile interval.
+3. The bootstrap BCa interval.
+4. The bootstrap basic interval.
+
+The analysis function returns one row per method:
+
+```{r methods}
+analyse <- function(x) {
+  tt <- stats::t.test(x)
+  bs <- boot_ci(x, mean, R = 499, type = c("percentile", "bca", "basic"))
+  data.frame(
+    method = c("t", bs$intervals$type),
+    estimate = mean(x),
+    se = c(sd(x) / sqrt(length(x)), rep(bs$se, 3)),
+    lower = c(tt$conf.int[1], bs$intervals$lower),
+    upper = c(tt$conf.int[2], bs$intervals$upper)
+  )
+}
+```
+
+## P: Performance measures and number of replicates
+
+The key measure is **coverage**. To estimate a coverage near 95% with a Monte
+Carlo SE of 1 percentage point, we need
+
+```{r nsim}
+sim_n_required(0.01, p = 0.95)
+```
+
+replicates per scenario. To keep this vignette fast we use 500, which gives
+MCSE $\approx 1$ point. The study in `analysis/` uses 5,000 (MCSE
+$\approx 0.3$ points).
+
+## Running the study
+
+```{r run}
+res <- run_simulation(generate, analyse, n_sim = 500, scenarios = scenarios,
+                      seed = 20240901)
+res$theta <- exp(res$sigma^2 / 2)
+res
+```
+
+Every replicate gets its own L'Ecuyer-CMRG stream [@lecuyer2002]. The results
+are therefore identical if the study is re-run in parallel, e.g. with
+`future::plan("multisession")` and `backend = "future"`.
+
+## Results
+
+```{r perf}
+perf <- sim_performance(res, true = "theta", by = c("n", "sigma", "method"))
+cov <- subset(perf, measure == "coverage")
+cov[, c("n", "sigma", "method", "estimate", "mcse")]
+```
+
+Coverage estimates should always be plotted with their Monte Carlo
+uncertainty:
+
+```{r plot, fig.alt = "Coverage of four interval methods by scenario, with Monte Carlo error bars."}
+cov$label <- sprintf("n=%d, sigma=%.1f", cov$n, cov$sigma)
+methods <- unique(cov$method)
+labels <- unique(cov$label)
+pos <- outer(seq_along(labels), (seq_along(methods) - 2.5) * 0.18, "+")
+plot(NA, xlim = c(0.5, length(labels) + 0.5), ylim = c(0.75, 1),
+     xaxt = "n", xlab = "", ylab = "Coverage")
+axis(1, at = seq_along(labels), labels = labels, cex.axis = 0.8)
+abline(h = 0.95, lty = 2)
+for (m in seq_along(methods)) {
+  d <- cov[cov$method == methods[m], ]
+  x <- pos[match(d$label, labels), m]
+  arrows(x, d$estimate - 1.96 * d$mcse, x, d$estimate + 1.96 * d$mcse,
+         angle = 90, code = 3, length = 0.02, col = m)
+  points(x, d$estimate, pch = 19, col = m)
+}
+legend("bottomright", legend = methods, col = seq_along(methods), pch = 19,
+       bty = "n", cex = 0.8)
+```
+
+Three findings stand out. (i) All methods under-cover when the skew is
+strong, and badly so when $n = 10$: bootstrap intervals for a mean are too
+narrow in small samples, partly because the plug-in variance divides by $n$
+rather than $n - 1$ [@davison1997]. (ii) The basic interval is clearly the
+worst, as theory predicts for skewed statistics, because it reflects the
+bootstrap distribution the wrong way. (iii) With 500 replicates, the
+differences between the $t$, percentile and BCa intervals are mostly
+comparable to their Monte Carlo SEs, so this small study **cannot** rank
+them. Without MCSEs it would be tempting to over-interpret those
+differences. The larger study in `analysis/` is designed to resolve them.
+
+### Other performance measures
+
+`sim_performance()` also reports bias, empirical and model-based SEs, MSE and
+interval width:
+
+```{r other}
+subset(perf, method == "t" & measure %in% c("bias", "empirical_se",
+                                             "rel_error_model_se"))
+```
+
+## Reporting checklist
+
+Following @morris2019, a report should state:
+
+* the aims, data-generating mechanisms, estimands, methods and performance
+  measures (ADEMP);
+* the number of replicates and how it was chosen;
+* the random number generator and seed (`attr(res, "seed")`);
+* how many replicates failed (`sum(!is.na(res$.error))`);
+* Monte Carlo SEs for every performance estimate.
+
+## References

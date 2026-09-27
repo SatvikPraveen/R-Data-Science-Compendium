@@ -1,0 +1,109 @@
+---
+title: "Resampling inference and effect sizes"
+output: rmarkdown::html_vignette
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{Resampling inference and effect sizes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 6,
+                      fig.height = 4)
+```
+
+```{r setup}
+library(RDataScienceCompendium)
+```
+
+This vignette shows how to quantify uncertainty without relying on
+distributional assumptions (bootstrap intervals and permutation tests), and how
+to report the *size* of an effect together with an exact interval.
+
+## Bootstrap confidence intervals
+
+Consider the ratio of mean fuel consumption between automatic and manual cars
+in `mtcars`. The ratio has no simple standard error, but the nonparametric
+bootstrap gives one directly. For a statistic of a data frame, `boot_ci()`
+resamples rows.
+
+```{r boot}
+ratio <- function(d) mean(d$mpg[d$am == 0]) / mean(d$mpg[d$am == 1])
+ci <- boot_ci(mtcars, ratio, R = 1999, seed = 2024)
+ci
+```
+
+The four methods rest on different assumptions [@davison1997]:
+
+* **percentile**: quantiles of the bootstrap distribution. It is
+  transformation-respecting but only first-order accurate.
+* **basic**: reflects the percentile interval around the estimate.
+* **normal**: estimate minus bootstrap bias, plus or minus a normal
+  quantile times the bootstrap SE.
+* **BCa**: corrects the percentile interval for median bias ($\hat z_0$) and
+  for skewness via the acceleration $\hat a$ [@efron1987]. It is second-order
+  accurate and usually preferred.
+
+```{r boot-diag}
+c(bias_correction = ci$bias_correction, acceleration = ci$acceleration)
+hist(ci$replicates, breaks = 40, main = "Bootstrap distribution",
+     xlab = "ratio of means", col = "grey85", border = "white")
+abline(v = ci$estimate, lwd = 2)
+```
+
+`boot_ci()` reproduces `boot::boot.ci()` to machine precision given the same
+seed (see the package tests). What it adds is a small, validated interface and
+a guarantee that the caller's random number stream is not changed.
+
+## Permutation tests
+
+A permutation test gives an exact test of the null hypothesis that the group
+labels are exchangeable. With 13 manual and 19 automatic cars there are
+$\binom{32}{13} \approx 3.5 \times 10^{8}$ rearrangements, far too many to
+enumerate, so `perm_test()` draws a random sample of them:
+
+```{r perm}
+manual <- mtcars$mpg[mtcars$am == 1]
+auto <- mtcars$mpg[mtcars$am == 0]
+pt <- perm_test(manual, auto, R = 9999, seed = 1)
+pt
+pt$p.value.mcse
+```
+
+The p-value is computed as $(b + 1)/(R + 1)$, never as $b/R$. The
+$b/R$ estimator can return zero, and the test built on it is anti-conservative
+[@phipson2010]. Any statistic can be used, such as a difference in medians:
+
+```{r perm-median}
+perm_test(manual, auto, statistic = function(x, y) median(x) - median(y),
+          R = 9999, seed = 1)$p.value
+```
+
+When the reference set is small, the test is exact. In the paired `sleep`
+data there are $2^{10} = 1024$ sign flips:
+
+```{r perm-exact}
+perm_test(sleep$extra[1:10], sleep$extra[11:20], paired = TRUE)
+```
+
+## Effect sizes with exact intervals
+
+A p-value says nothing about the magnitude of an effect. Standardised mean
+differences do, but their commonly reported large-sample intervals can be
+badly wrong in small samples. `cohens_d()` and `hedges_g()` invert the
+noncentral $t$ distribution instead [@steiger1997; @cumming2001]:
+
+```{r es}
+hedges_g(manual, auto)
+cohens_d(sleep$extra[1:10], sleep$extra[11:20], paired = TRUE)
+```
+
+Hedges' $g$ applies the exact correction $J(\nu)$, which removes the upward
+bias of $d$ in small samples [@hedges1981]:
+
+```{r hedges-j}
+round(hedges_correction(c(5, 10, 20, 50, 100)), 4)
+```
+
+## References
