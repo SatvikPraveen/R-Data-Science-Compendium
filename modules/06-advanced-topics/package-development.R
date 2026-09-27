@@ -7,13 +7,26 @@
 #' R PACKAGE DEVELOPMENT
 #' ========================================
 
-# Load required libraries
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(
-  devtools, usethis, roxygen2, testthat, pkgdown,
-  covr, lintr, styler, goodpractice, rhub,
-  desc, here, fs, glue, rlang, lifecycle
-)
+# Packages used by this module. Install them with
+#   Rscript modules/install-dependencies.R
+suppressPackageStartupMessages({
+  library(devtools)
+  library(usethis)
+  library(roxygen2)
+  library(testthat)
+  library(pkgdown)
+  library(covr)
+  library(lintr)
+  library(styler)
+  library(goodpractice)
+  library(rhub)
+  library(desc)
+  library(here)
+  library(fs)
+  library(glue)
+  library(rlang)
+  library(lifecycle)
+})
 
 #' ========================================
 #' 1. PACKAGE CREATION AND STRUCTURE

@@ -7,14 +7,34 @@
 #' COMPREHENSIVE UNSUPERVISED LEARNING
 #' ========================================
 
-# Load required libraries
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(
-  dplyr, ggplot2, cluster, factoextra, FactoMineR, corrplot,
-  pheatmap, dbscan, fpc, mclust, mixtools, apcluster, igraph,
-  arules, arulesViz, Rtsne, umap, ica, NMF, plotly, 
-  GGally, gridExtra, RColorBrewer, viridis
-)
+# Packages used by this module. Install them with
+#   Rscript modules/install-dependencies.R
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(ggplot2)
+  library(cluster)
+  library(factoextra)
+  library(FactoMineR)
+  library(corrplot)
+  library(pheatmap)
+  library(dbscan)
+  library(fpc)
+  library(mclust)
+  library(mixtools)
+  library(apcluster)
+  library(igraph)
+  library(arules)
+  library(arulesViz)
+  library(Rtsne)
+  library(umap)
+  library(ica)
+  library(NMF)
+  library(plotly)
+  library(GGally)
+  library(gridExtra)
+  library(RColorBrewer)
+  library(viridis)
+})
 
 #' ========================================
 #' 1. DATA PREPARATION FOR UNSUPERVISED LEARNING

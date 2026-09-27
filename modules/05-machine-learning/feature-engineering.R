@@ -7,14 +7,30 @@
 #' COMPREHENSIVE FEATURE ENGINEERING
 #' ========================================
 
-# Load required libraries
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(
-  dplyr, ggplot2, lubridate, stringr, forcats, tidyr,
-  VIM, mice, corrplot, caret, Boruta, FSelector,
-  recipes, textfeatures, tm, SnowballC, wordcloud,
-  RcppRoll, forecast, zoo, moments, entropy
-)
+# Packages used by this module. Install them with
+#   Rscript modules/install-dependencies.R
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(ggplot2)
+  library(lubridate)
+  library(stringr)
+  library(forcats)
+  library(tidyr)
+  library(VIM)
+  library(mice)
+  library(corrplot)
+  library(caret)
+  library(Boruta)
+  library(recipes)
+  library(tm)
+  library(SnowballC)
+  library(wordcloud)
+  library(RcppRoll)
+  library(forecast)
+  library(zoo)
+  library(moments)
+  library(entropy)
+})
 
 #' ========================================
 #' 1. NUMERIC FEATURE ENGINEERING

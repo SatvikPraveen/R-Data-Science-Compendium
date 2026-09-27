@@ -7,12 +7,18 @@
 #' FUNCTIONAL PROGRAMMING IN R
 #' ========================================
 
-# Load required libraries
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(
-  dplyr, purrr, magrittr, functional, memoise, 
-  pryr, microbenchmark, foreach, parallel
-)
+# Packages used by this module. Install them with
+#   Rscript modules/install-dependencies.R
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(purrr)
+  library(magrittr)
+  library(functional)
+  library(memoise)
+  library(microbenchmark)
+  library(foreach)
+  library(parallel)
+})
 
 #' ========================================
 #' 1. HIGHER-ORDER FUNCTIONS

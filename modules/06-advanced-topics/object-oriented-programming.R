@@ -7,9 +7,13 @@
 #' OBJECT-ORIENTED PROGRAMMING IN R
 #' ========================================
 
-# Load required libraries
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(R6, methods, pryr, testthat)
+# Packages used by this module. Install them with
+#   Rscript modules/install-dependencies.R
+suppressPackageStartupMessages({
+  library(R6)
+  library(methods)
+  library(testthat)
+})
 
 #' ========================================
 #' 1. S3 OBJECT SYSTEM

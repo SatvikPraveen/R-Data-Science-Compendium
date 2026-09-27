@@ -7,13 +7,31 @@
 #' COMPREHENSIVE SUPERVISED LEARNING
 #' ========================================
 
-# Load required libraries
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(
-  dplyr, ggplot2, caret, randomForest, xgboost, e1071, nnet,
-  rpart, rpart.plot, ROCR, pROC, corrplot, VIM, mice,
-  ModelMetrics, lime, DALEX, iml, plotly, DT, kableExtra
-)
+# Packages used by this module. Install them with
+#   Rscript modules/install-dependencies.R
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(ggplot2)
+  library(caret)
+  library(randomForest)
+  library(xgboost)
+  library(e1071)
+  library(nnet)
+  library(rpart)
+  library(rpart.plot)
+  library(ROCR)
+  library(pROC)
+  library(corrplot)
+  library(VIM)
+  library(mice)
+  library(ModelMetrics)
+  library(lime)
+  library(DALEX)
+  library(iml)
+  library(plotly)
+  library(DT)
+  library(kableExtra)
+})
 
 #' ========================================
 #' 1. DATA PREPROCESSING PIPELINE
@@ -547,6 +565,11 @@ tune_hyperparameters <- function(data_splits, model_type = "random_forest", cv_f
     method <- "svmRadial"
     
   } else if (model_type == "xgboost") {
+    if (utils::packageVersion("xgboost") >= "3.0.0") {
+      stop("caret's xgbTree method does not support xgboost >= 3.0 (installed: ",
+           utils::packageVersion("xgboost"), "); use model_type = \"rf\" or ",
+           "install xgboost < 3.0.", call. = FALSE)
+    }
     param_grid <- expand.grid(
       nrounds = c(50, 100, 200),
       max_depth = c(3, 6, 9),

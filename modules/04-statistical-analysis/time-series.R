@@ -7,13 +7,27 @@
 #' COMPREHENSIVE TIME SERIES ANALYSIS
 #' ========================================
 
-# Load required libraries
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(
-  dplyr, ggplot2, lubridate, forecast, tseries, zoo, xts,
-  TTR, PerformanceAnalytics, tidyquant, timetk, modeltime,
-  prophet, seasonal, bcp, changepoint, plotly, DT
-)
+# Packages used by this module. Install them with
+#   Rscript modules/install-dependencies.R
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(ggplot2)
+  library(lubridate)
+  library(forecast)
+  library(tseries)
+  library(zoo)
+  library(xts)
+  library(TTR)
+  library(PerformanceAnalytics)
+  library(tidyquant)
+  library(timetk)
+  library(modeltime)
+  library(prophet)
+  library(seasonal)
+  library(changepoint)
+  library(plotly)
+  library(DT)
+})
 
 #' ========================================
 #' 1. TIME SERIES DATA PREPARATION
@@ -487,11 +501,17 @@ fit_prophet_model <- function(ts_prep, periods = 30) {
 
 #' Detect Change Points in Time Series
 #' @param ts_data Time series object
-#' @param method Method for change point detection ("bcp", "cpt")
+#' @param method Method for change point detection: "cpt" (changepoint
+#'   package, default) or "bcp" (Bayesian; needs the archived bcp package)
 #' @return Change point detection results
-detect_change_points <- function(ts_data, method = "bcp") {
+detect_change_points <- function(ts_data, method = "cpt") {
   
   if (method == "bcp") {
+    if (!requireNamespace("bcp", quietly = TRUE)) {
+      stop("method = \"bcp\" needs the 'bcp' package, which has been archived ",
+           "on CRAN; use method = \"cpt\" instead.", call. = FALSE)
+    }
+    bcp <- bcp::bcp
     # Bayesian Change Point analysis
     bcp_result <- bcp(as.numeric(ts_data), mcmc = 5000, burnin = 1000)
     
@@ -650,7 +670,7 @@ demo_time_series_analysis <- function() {
   cat("="*50, "\n")
   
   # Detect change points
-  cp_results <- detect_change_points(ts_prep$ts_object, method = "bcp")
+  cp_results <- detect_change_points(ts_prep$ts_object, method = "cpt")
   
   cat("Detected Change Points:", paste(cp_results$change_points, collapse = ", "), "\n")
   

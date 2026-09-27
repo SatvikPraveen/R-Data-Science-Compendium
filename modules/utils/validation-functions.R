@@ -7,12 +7,19 @@
 #' VALIDATION FUNCTIONS AND DATA QUALITY
 #' ========================================
 
-# Load required libraries
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(
-  dplyr, assertthat, checkmate, validate, VIM, 
-  stringr, lubridate, testthat, methods
-)
+# Packages used by this module. Install them with
+#   Rscript modules/install-dependencies.R
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(assertthat)
+  library(checkmate)
+  library(validate)
+  library(VIM)
+  library(stringr)
+  library(lubridate)
+  library(testthat)
+  library(methods)
+})
 
 #' ========================================
 #' 1. BASIC DATA VALIDATION

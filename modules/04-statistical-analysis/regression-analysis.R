@@ -7,13 +7,27 @@
 #' COMPREHENSIVE REGRESSION ANALYSIS
 #' ========================================
 
-# Load required libraries
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(
-  dplyr, ggplot2, broom, car, MASS, glmnet, randomForest,
-  corrplot, plotly, GGally, leaps, caret, ModelMetrics,
-  performance, see, parameters, insight
-)
+# Packages used by this module. Install them with
+#   Rscript modules/install-dependencies.R
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(ggplot2)
+  library(broom)
+  library(car)
+  library(MASS)
+  library(glmnet)
+  library(randomForest)
+  library(corrplot)
+  library(plotly)
+  library(GGally)
+  library(leaps)
+  library(caret)
+  library(ModelMetrics)
+  library(performance)
+  library(see)
+  library(parameters)
+  library(insight)
+})
 
 #' ========================================
 #' 1. LINEAR REGRESSION ANALYSIS

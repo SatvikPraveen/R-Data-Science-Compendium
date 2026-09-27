@@ -7,15 +7,31 @@
 #' INTERACTIVE PLOTTING FRAMEWORK
 #' ========================================
 
-# Load required libraries
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(
-  dplyr, ggplot2, plotly, DT, crosstalk, htmlwidgets,
-  leaflet, visNetwork, networkD3, highcharter, 
-  ggiraph, echarts4r, reactable, flexdashboard,
-  shiny, shinydashboard, htmltools, viridis,
-  scales, tidyr, tibble
-)
+# Packages used by this module. Install them with
+#   Rscript modules/install-dependencies.R
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(ggplot2)
+  library(plotly)
+  library(DT)
+  library(crosstalk)
+  library(htmlwidgets)
+  library(leaflet)
+  library(visNetwork)
+  library(networkD3)
+  library(highcharter)
+  library(ggiraph)
+  library(echarts4r)
+  library(reactable)
+  library(flexdashboard)
+  library(shiny)
+  library(shinydashboard)
+  library(htmltools)
+  library(viridis)
+  library(scales)
+  library(tidyr)
+  library(tibble)
+})
 
 #' ========================================
 #' 1. INTERACTIVE SCATTER PLOTS

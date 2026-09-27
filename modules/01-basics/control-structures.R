@@ -72,21 +72,17 @@ demonstrate_conditionals <- function(data, threshold = 80) {
                      ifelse(data$score >= threshold, "Medium", "Low"))
   )
   
-  # Case when style conditionals (using dplyr-like logic)
+  # Many-way conditionals without nested ifelse(): cut() maps numeric
+  # intervals to labels in one vectorised call (right = FALSE gives the
+  # ">= lower bound" semantics of a case_when() chain).
   results$case_when_style <- data.frame(
     score = data$score,
-    detailed_grade = case_when(
-      data$score >= 97 ~ "A+",
-      data$score >= 93 ~ "A",
-      data$score >= 90 ~ "A-",
-      data$score >= 87 ~ "B+",
-      data$score >= 83 ~ "B",
-      data$score >= 80 ~ "B-",
-      data$score >= 77 ~ "C+",
-      data$score >= 73 ~ "C",
-      data$score >= 70 ~ "C-",
-      TRUE ~ "F"
-    )
+    detailed_grade = as.character(cut(
+      data$score,
+      breaks = c(-Inf, 70, 73, 77, 80, 83, 87, 90, 93, 97, Inf),
+      labels = c("F", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"),
+      right = FALSE
+    ))
   )
   
   # Statistical conditional analysis

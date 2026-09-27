@@ -291,13 +291,18 @@ advanced_list_operations <- function() {
     )
   )
   
+  # Nesting depth: 0 for an atomic vector, 1 + deepest child for a list.
+  list_depth <- function(x) {
+    if (is.list(x) && length(x) > 0) 1L + max(vapply(x, list_depth, integer(1))) else 0L
+  }
+
   list(
     data = complex_list,
     operations = operations,
     analysis = list(
       total_elements = length(unlist(complex_list)),
       numeric_elements = sum(sapply(unlist(complex_list), is.numeric)),
-      structure_depth = max(rapply(complex_list, function(x) 1, how = "list"))
+      structure_depth = list_depth(complex_list)
     )
   )
 }

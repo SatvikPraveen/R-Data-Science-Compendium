@@ -7,13 +7,24 @@
 #' PARALLEL COMPUTING IN R
 #' ========================================
 
-# Load required libraries
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(
-  parallel, foreach, doParallel, doFuture, future, 
-  future.apply, snow, Rmpi, microbenchmark, profvis,
-  data.table, Rcpp, RcppArmadillo, bigmemory, ff
-)
+# Packages used by this module. Install them with
+#   Rscript modules/install-dependencies.R
+suppressPackageStartupMessages({
+  library(parallel)
+  library(foreach)
+  library(doParallel)
+  library(doFuture)
+  library(future)
+  library(future.apply)
+  library(snow)
+  library(microbenchmark)
+  library(profvis)
+  library(data.table)
+  library(Rcpp)
+  library(RcppArmadillo)
+  library(bigmemory)
+  library(ff)
+})
 
 # Detect available cores
 available_cores <- parallel::detectCores()

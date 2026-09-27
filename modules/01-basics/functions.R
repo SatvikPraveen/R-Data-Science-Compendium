@@ -361,12 +361,15 @@ demonstrate_functional_programming <- function() {
   results <- list()
   
   # Higher-order functions
+  # `..1` inside an anonymous function would refer to *its own* `...`, so
+  # capture the extra argument once and let the closures use it.
   apply_operation <- function(data, operation, ...) {
+    arg <- if (...length() > 0) ..1 else NULL
     switch(operation,
-      "transform" = lapply(data, function(x, ...) x * ..1, ...),
-      "filter" = Filter(function(x) x > ..1, data, ...),
+      "transform" = lapply(data, function(x) x * arg),
+      "filter" = Filter(function(x) x > arg, data),
       "reduce" = Reduce(function(acc, x) acc + x, data),
-      "map_if" = lapply(data, function(x) if (x > ..1) x^2 else x, ...),
+      "map_if" = lapply(data, function(x) if (x > arg) x^2 else x),
       stop("Unknown operation")
     )
   }

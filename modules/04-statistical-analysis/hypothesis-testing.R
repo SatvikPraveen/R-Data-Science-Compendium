@@ -1184,8 +1184,17 @@ generate_test_summary <- function(results, alpha) {
     
     for (test_name in names(results$tests)) {
       test_result <- results$tests[[test_name]]
-      if (!is.null(test_result$p.value) && !is.na(test_result$p.value)) {
-        p_values[[test_name]] <- test_result$p.value
+      p <- if (is.list(test_result)) test_result$p.value else NULL
+      if (!is.numeric(p)) next
+      # Some tests (per-group or pairwise) return several p-values; report
+      # each of them rather than only the first.
+      if (length(p) == 1L) {
+        if (!is.na(p)) p_values[[test_name]] <- p
+      } else {
+        labels <- if (!is.null(names(p))) names(p) else seq_along(p)
+        for (k in which(!is.na(p))) {
+          p_values[[paste0(test_name, "[", labels[k], "]")]] <- p[[k]]
+        }
       }
     }
     

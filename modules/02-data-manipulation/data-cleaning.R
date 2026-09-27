@@ -106,7 +106,7 @@ check_data_types <- function(data) {
       }
       
       # Check if should be date
-      if (any(grepl("\\d{4}-\\d{2}-\\d{2}", values, na.rm = TRUE))) {
+      if (any(grepl("\\d{4}-\\d{2}-\\d{2}", values))) {
         type_issues[[col]] <- "Possibly date format"
       }
     }
@@ -352,7 +352,7 @@ clean_date_data <- function(data, date_columns = NULL, target_format = "%Y-%m-%d
     # Auto-detect potential date columns
     date_columns <- names(data)[sapply(data, function(x) {
       if (is.character(x)) {
-        any(grepl("\\d{4}-\\d{2}-\\d{2}|\\d{2}/\\d{2}/\\d{4}|\\d{2}-\\d{2}-\\d{4}", x, na.rm = TRUE))
+        any(grepl("\\d{4}-\\d{2}-\\d{2}|\\d{2}/\\d{2}/\\d{4}|\\d{2}-\\d{2}-\\d{4}", x))
       } else {
         inherits(x, "Date") || inherits(x, "POSIXt")
       }
@@ -681,8 +681,8 @@ generate_messy_data <- function(n = 500) {
   set.seed(123)
   
   # Create intentionally messy data
-  data.frame(
-    id = c(1:n, sample(1:50, 20)),  # Some duplicate IDs
+  messy <- data.frame(
+    id = 1:n,
     name = c(
       paste("  ", sample(c("john doe", "JANE SMITH", "Bob Johnson", "mary WILSON"), n-50, replace = TRUE), "  "),
       rep("", 50)  # Some empty names
@@ -704,9 +704,12 @@ generate_messy_data <- function(n = 500) {
       sample(c("sales", "ENGINEERING", "  marketing  ", "HR", ""), n-20, replace = TRUE),
       rep(NA, 20)
     ),
-    notes = paste("Some notes with special chars:", sample(c("â€™", "â€œtest", "normal text"), n+20, replace = TRUE)),
+    notes = paste("Some notes with special chars:", sample(c("â€™", "â€œtest", "normal text"), n, replace = TRUE)),
     stringsAsFactors = FALSE
   )
+
+  # Append 20 exact duplicates of early records (duplicate IDs to detect)
+  rbind(messy, messy[sample(1:50, 20), ])
 }
 
 #' Run Data Cleaning Demonstration

@@ -11,6 +11,28 @@ library(dplyr)
 library(ggplot2)
 library(pROC)
 library(ROSE)
+library(tidyr)
+library(purrr)
+library(tibble)
+
+# Plots use the shared theme from modules/utils/plotting-helpers.R when it has
+# been sourced; otherwise fall back to an equivalent minimal theme so that
+# this module also works on its own.
+if (!exists("theme_professional", mode = "function")) {
+  theme_professional <- function(base_size = 12) {
+    theme_minimal(base_size = base_size) +
+      theme(plot.title = element_text(face = "bold"),
+            panel.grid.minor = element_blank(),
+            legend.position = "bottom")
+  }
+}
+if (!exists("get_custom_palette", mode = "function")) {
+  get_custom_palette <- function(palette_name = "professional", n = 8) {
+    colors <- c("#2C3E50", "#3498DB", "#E74C3C", "#F39C12",
+                "#27AE60", "#9B59B6", "#1ABC9C", "#34495E")
+    rep_len(colors, n)
+  }
+}
 
 # =============================================================================
 # S3 CLASS SYSTEM FOR ML PIPELINE
@@ -343,8 +365,11 @@ apply_preprocessing <- function(pipeline) {
     
     # Remove near-zero variance features
     if ("nzv" %in% names(pipeline$preprocessor)) {
-      nzv_features <- names(predict(pipeline$preprocessor$nzv, data[pipeline$feature_names$numeric]))
-      data <- data[nzv_features]
+      kept <- names(predict(pipeline$preprocessor$nzv, data[pipeline$feature_names$numeric]))
+      dropped <- setdiff(pipeline$feature_names$numeric, kept)
+      # Drop only the near-zero-variance predictors; keep the target and
+      # non-numeric columns.
+      data <- data[setdiff(names(data), dropped)]
     }
     
     # Apply categorical encoding
@@ -414,6 +439,16 @@ apply_preprocessing <- function(pipeline) {
 # MODEL TRAINING AND HYPERPARAMETER TUNING
 # =============================================================================
 
+
+#' Can caret's "xgbTree" method be used with the installed xgboost?
+#'
+#' caret (<= 7.0-1) calls xgboost interfaces that were removed in
+#' xgboost 3.0, so every fit fails there.
+xgb_caret_compatible <- function() {
+  requireNamespace("xgboost", quietly = TRUE) &&
+    utils::packageVersion("xgboost") < "3.0.0"
+}
+
 #' Train Multiple Models with Cross-Validation
 #'
 #' @description Trains and compares multiple machine learning algorithms
@@ -469,6 +504,11 @@ train_models <- function(pipeline,
   models <- list()
   
   for (algorithm in algorithms) {
+    if (algorithm == "xgbTree" && !xgb_caret_compatible()) {
+      message("Skipping xgbTree: caret's xgbTree method does not support ",
+              "xgboost >= 3.0 (installed: ", utils::packageVersion("xgboost"), ").")
+      next
+    }
     message("Training ", algorithm, " model...")
     
     tryCatch({
@@ -1093,6 +1133,10 @@ run_ml_pipeline_demo <- function(data = NULL, target_var = NULL, problem_type = 
     }
   }
   
+  # Row identifiers carry no information about the outcome; using them as
+  # predictors (or in interaction terms) would only let models overfit.
+  data <- select(data, -any_of(c("customer_id", "property_id")))
+
   # Initialize pipeline
   if (verbose) cat("2. Initializing ML pipeline...\n")
   pipeline <- create_ml_pipeline(

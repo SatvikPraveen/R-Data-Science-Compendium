@@ -11,6 +11,7 @@ library(viridis)
 library(plotly)
 library(patchwork)
 library(ggthemes)
+library(stringr)
 
 # =============================================================================
 # CUSTOM THEMES AND STYLING
@@ -746,6 +747,13 @@ create_visualization_dashboard <- function(data, save_plots = FALSE, output_path
     ) %>%
     arrange(date)
   }
+
+  required <- c("category", "segment", "value", "revenue", "date", "score", "region")
+  missing_cols <- setdiff(required, names(data))
+  if (length(missing_cols) > 0) {
+    stop("create_visualization_dashboard() needs columns: ",
+         paste(missing_cols, collapse = ", "), call. = FALSE)
+  }
   
   plots <- list()
   
@@ -1120,15 +1128,26 @@ run_visualization_demo <- function(generate_sample_data = TRUE, save_outputs = F
   
   # Create comprehensive dashboard
   if (verbose) cat("2. Creating comprehensive visualization dashboard...\n")
+  # Map the customer data onto the dashboard's generic schema
+  dashboard_data <- demo_data %>%
+    transmute(
+      id = customer_id,
+      category = cut(age, c(24, 34, 44, 54, 65),
+                     labels = c("25-34", "35-44", "45-54", "55-65")),
+      segment, region, date,
+      value = income / 1000,
+      revenue = customer_value,
+      score = loyalty_score
+    )
   results$dashboard_plots <- create_visualization_dashboard(
-    data = demo_data,
+    data = dashboard_data,
     save_plots = save_outputs,
     output_path = "outputs/plots/"
   )
   
   # Create interactive visualizations
   if (verbose) cat("3. Generating interactive plots...\n")
-  results$interactive_plots <- create_interactive_report(demo_data)
+  results$interactive_plots <- create_interactive_report(dashboard_data)
   
   # Create specialized visualizations
   if (verbose) cat("4. Creating specialized visualizations...\n")

@@ -7,12 +7,21 @@
 #' PLOTTING HELPERS AND UTILITIES
 #' ========================================
 
-# Load required libraries
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(
-  ggplot2, scales, RColorBrewer, viridis, gridExtra, 
-  grid, gtable, cowplot, patchwork, ggrepel, ggridges
-)
+# Packages used by this module. Install them with
+#   Rscript modules/install-dependencies.R
+suppressPackageStartupMessages({
+  library(ggplot2)
+  library(scales)
+  library(RColorBrewer)
+  library(viridis)
+  library(gridExtra)
+  library(grid)
+  library(gtable)
+  library(cowplot)
+  library(patchwork)
+  library(ggrepel)
+  library(ggridges)
+})
 
 #' ========================================
 #' 1. COLOR PALETTES AND THEMES

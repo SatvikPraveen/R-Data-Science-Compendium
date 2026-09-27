@@ -93,9 +93,9 @@ calculate_classification_metrics <- function(actual, predicted, probabilities = 
       metrics$optimal_threshold <- optimal_threshold
       
     } else {
-      # Multi-class AUC (one-vs-rest)
-      multiclass_auc <- MultiLogLoss(actual, probabilities)
-      metrics$multiclass_logloss <- multiclass_auc
+      # Multi-class log loss (MLmetrics' argument order is y_pred, y_true)
+      metrics$multiclass_logloss <- MultiLogLoss(y_pred = as.matrix(probabilities),
+                                                 y_true = actual)
       
       # One-vs-rest AUC for each class
       ovr_auc <- sapply(levels(factor(actual)), function(class) {
