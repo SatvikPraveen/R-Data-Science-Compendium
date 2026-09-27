@@ -152,31 +152,32 @@ ui <- dashboardPage(
       # Filters
       h4("Global Filters", style = "margin-left: 20px; color: #2C3E50;"),
       
-      dateRangeInput(
-        "date_range",
-        "Date Range:",
-        start = Sys.Date() - 365,
-        end = Sys.Date(),
-        width = "90%",
-        style = "margin-left: 20px;"
-      ),
-      
-      selectInput(
-        "customer_segment",
-        "Customer Segment:",
-        choices = c("All", "Premium", "Standard", "Basic"),
-        selected = "All",
-        width = "90%",
-        style = "margin-left: 20px;"
-      ),
-      
-      selectInput(
-        "channel",
-        "Sales Channel:",
-        choices = c("All", "Online", "Mobile", "Store", "Phone"),
-        selected = "All",
-        width = "90%",
-        style = "margin-left: 20px;"
+      # Input functions have no `style` argument; indent them with a wrapper
+      div(
+        style = "margin-left: 20px;",
+        dateRangeInput(
+          "date_range",
+          "Date Range:",
+          start = Sys.Date() - 365,
+          end = Sys.Date(),
+          width = "90%"
+        ),
+        
+        selectInput(
+          "customer_segment",
+          "Customer Segment:",
+          choices = c("All", "Premium", "Standard", "Basic"),
+          selected = "All",
+          width = "90%"
+        ),
+        
+        selectInput(
+          "channel",
+          "Sales Channel:",
+          choices = c("All", "Online", "Mobile", "Store", "Phone"),
+          selected = "All",
+          width = "90%"
+        )
       ),
       
       br(),

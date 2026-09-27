@@ -41,8 +41,8 @@ theme_professional <- function(base_size = 12, base_family = "Arial", grid_color
       axis.ticks = element_line(color = "black", size = 0.5),
       axis.text = element_text(color = "black", size = rel(0.9)),
       axis.title = element_text(color = "black", size = rel(1.0), face = "bold"),
-      axis.title.x = element_text(margin = margin(t = 10)),
-      axis.title.y = element_text(margin = margin(r = 10)),
+      axis.title.x = element_text(margin = ggplot2::margin(t = 10)),
+      axis.title.y = element_text(margin = ggplot2::margin(r = 10)),
       
       # Legend
       legend.background = element_rect(fill = "white", color = "grey80", size = 0.5),
@@ -50,34 +50,34 @@ theme_professional <- function(base_size = 12, base_family = "Arial", grid_color
       legend.title = element_text(face = "bold", size = rel(1.0)),
       legend.text = element_text(size = rel(0.9)),
       legend.position = "right",
-      legend.margin = margin(l = 10),
+      legend.margin = ggplot2::margin(l = 10),
       
       # Plot titles and labels
       plot.title = element_text(
         face = "bold", 
         size = rel(1.3), 
         hjust = 0, 
-        margin = margin(b = 10)
+        margin = ggplot2::margin(b = 10)
       ),
       plot.subtitle = element_text(
         color = "grey40", 
         size = rel(1.1), 
         hjust = 0,
-        margin = margin(b = 15)
+        margin = ggplot2::margin(b = 15)
       ),
       plot.caption = element_text(
         color = "grey60", 
         size = rel(0.8), 
         hjust = 1,
-        margin = margin(t = 15)
+        margin = ggplot2::margin(t = 15)
       ),
       
       # Facets
       strip.background = element_rect(fill = "grey95", color = "grey80", size = 0.5),
-      strip.text = element_text(face = "bold", size = rel(1.0), margin = margin(5, 5, 5, 5)),
+      strip.text = element_text(face = "bold", size = rel(1.0), margin = ggplot2::margin(5, 5, 5, 5)),
       
       # Spacing
-      plot.margin = margin(20, 20, 20, 20)
+      plot.margin = ggplot2::margin(20, 20, 20, 20)
     )
 }
 

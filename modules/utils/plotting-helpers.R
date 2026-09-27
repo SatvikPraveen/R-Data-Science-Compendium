@@ -87,17 +87,17 @@ theme_professional <- function(base_size = 12, base_family = "",
     theme(
       # Text elements
       plot.title = element_text(size = rel(1.2), face = "bold", 
-                               margin = margin(b = 20), hjust = 0),
+                               margin = ggplot2::margin(b = 20), hjust = 0),
       plot.subtitle = element_text(size = rel(1), color = "grey40", 
-                                  margin = margin(b = 20)),
+                                  margin = ggplot2::margin(b = 20)),
       plot.caption = element_text(size = rel(0.8), color = "grey50", 
-                                 hjust = 1, margin = margin(t = 15)),
+                                 hjust = 1, margin = ggplot2::margin(t = 15)),
       
       # Axis elements
       axis.title = element_text(size = rel(1), face = "bold"),
       axis.text = element_text(size = rel(0.9)),
-      axis.title.x = element_text(margin = margin(t = 10)),
-      axis.title.y = element_text(margin = margin(r = 10)),
+      axis.title.x = element_text(margin = ggplot2::margin(t = 10)),
+      axis.title.y = element_text(margin = ggplot2::margin(r = 10)),
       
       # Legend elements
       legend.title = element_text(size = rel(1), face = "bold"),
@@ -110,7 +110,7 @@ theme_professional <- function(base_size = 12, base_family = "",
       
       # Strip elements (for facets)
       strip.text = element_text(size = rel(1), face = "bold", 
-                               margin = margin(b = 5, t = 5)),
+                               margin = ggplot2::margin(b = 5, t = 5)),
       strip.background = element_rect(fill = "grey90", color = NA)
     )
   

@@ -33,18 +33,18 @@ theme_corporate <- function(base_size = 12, base_family = "Arial") {
         size = base_size * 1.4,
         face = "bold",
         color = "#2c3e50",
-        margin = margin(b = 20)
+        margin = ggplot2::margin(b = 20)
       ),
       plot.subtitle = element_text(
         size = base_size * 1.1,
         color = "#7f8c8d",
-        margin = margin(b = 15)
+        margin = ggplot2::margin(b = 15)
       ),
       plot.caption = element_text(
         size = base_size * 0.8,
         color = "#95a5a6",
         hjust = 0,
-        margin = margin(t = 15)
+        margin = ggplot2::margin(t = 15)
       ),
       
       # Axis elements
@@ -86,12 +86,12 @@ theme_corporate <- function(base_size = 12, base_family = "Arial") {
         size = base_size,
         color = "#2c3e50",
         face = "bold",
-        margin = margin(t = 5, b = 5)
+        margin = ggplot2::margin(t = 5, b = 5)
       ),
       
       # Plot background
       plot.background = element_rect(fill = "white", color = NA),
-      plot.margin = margin(t = 20, r = 20, b = 20, l = 20)
+      plot.margin = ggplot2::margin(t = 20, r = 20, b = 20, l = 20)
     )
 }
 
@@ -108,17 +108,17 @@ theme_academic <- function(base_size = 11, base_family = "Times") {
         size = base_size * 1.3,
         face = "bold",
         hjust = 0.5,
-        margin = margin(b = 15)
+        margin = ggplot2::margin(b = 15)
       ),
       plot.subtitle = element_text(
         size = base_size * 1.1,
         hjust = 0.5,
-        margin = margin(b = 10)
+        margin = ggplot2::margin(b = 10)
       ),
       plot.caption = element_text(
         size = base_size * 0.8,
         hjust = 0,
-        margin = margin(t = 10)
+        margin = ggplot2::margin(t = 10)
       ),
       
       # Axis elements
@@ -144,7 +144,7 @@ theme_academic <- function(base_size = 11, base_family = "Times") {
       
       # Plot elements
       plot.background = element_rect(fill = "white"),
-      plot.margin = margin(t = 15, r = 15, b = 15, l = 15)
+      plot.margin = ggplot2::margin(t = 15, r = 15, b = 15, l = 15)
     )
 }
 
@@ -161,18 +161,18 @@ theme_dark_modern <- function(base_size = 12, base_family = "Arial") {
         size = base_size * 1.4,
         face = "bold",
         color = "#ffffff",
-        margin = margin(b = 20)
+        margin = ggplot2::margin(b = 20)
       ),
       plot.subtitle = element_text(
         size = base_size * 1.1,
         color = "#cccccc",
-        margin = margin(b = 15)
+        margin = ggplot2::margin(b = 15)
       ),
       plot.caption = element_text(
         size = base_size * 0.8,
         color = "#999999",
         hjust = 0,
-        margin = margin(t = 15)
+        margin = ggplot2::margin(t = 15)
       ),
       
       # Axis elements
@@ -216,7 +216,7 @@ theme_dark_modern <- function(base_size = 12, base_family = "Arial") {
       
       # Plot background
       plot.background = element_rect(fill = "#1e1e1e", color = NA),
-      plot.margin = margin(t = 20, r = 20, b = 20, l = 20)
+      plot.margin = ggplot2::margin(t = 20, r = 20, b = 20, l = 20)
     )
 }
 
@@ -234,26 +234,26 @@ theme_minimal_clean <- function(base_size = 12, base_family = "Helvetica") {
         face = "bold",
         color = "#2c3e50",
         hjust = 0.5,
-        margin = margin(b = 30)
+        margin = ggplot2::margin(b = 30)
       ),
       plot.subtitle = element_text(
         size = base_size * 1.1,
         color = "#7f8c8d",
         hjust = 0.5,
-        margin = margin(b = 20)
+        margin = ggplot2::margin(b = 20)
       ),
       
       # Axis elements
       axis.title.x = element_text(
         size = base_size,
         color = "#2c3e50",
-        margin = margin(t = 10)
+        margin = ggplot2::margin(t = 10)
       ),
       axis.title.y = element_text(
         size = base_size,
         color = "#2c3e50",
         angle = 90,
-        margin = margin(r = 10)
+        margin = ggplot2::margin(r = 10)
       ),
       axis.text = element_text(
         size = base_size * 0.9,
@@ -277,7 +277,7 @@ theme_minimal_clean <- function(base_size = 12, base_family = "Helvetica") {
       
       # Plot elements
       plot.background = element_rect(fill = "white", color = NA),
-      plot.margin = margin(t = 20, r = 20, b = 20, l = 20)
+      plot.margin = ggplot2::margin(t = 20, r = 20, b = 20, l = 20)
     )
 }
 
@@ -454,7 +454,7 @@ preview_palette <- function(palette_function, palette_name, n = 8) {
     labs(title = paste("Color Palette:", palette_name)) +
     theme(
       plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
-      plot.margin = margin(t = 20, b = 20)
+      plot.margin = ggplot2::margin(t = 20, b = 20)
     ) +
     coord_fixed(ratio = 0.8)
 }

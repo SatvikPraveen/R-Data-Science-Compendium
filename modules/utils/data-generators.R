@@ -5,6 +5,13 @@
 
 library(dplyr)
 library(lubridate)
+library(purrr)
+library(stringr)
+
+# Fixed "today" for all simulated data. Using DEMO_REFERENCE_DATE would make the data
+# (and every result derived from it) change from day to day even with a
+# fixed seed.
+DEMO_REFERENCE_DATE <- as.Date("2024-12-31")
 
 # =============================================================================
 # BUSINESS DATA GENERATORS
@@ -22,7 +29,7 @@ library(lubridate)
 generate_customer_data <- function(n_customers = 1000, 
                                  seed = 42, 
                                  start_date = as.Date("2020-01-01"),
-                                 end_date = Sys.Date()) {
+                                 end_date = DEMO_REFERENCE_DATE) {
   
   set.seed(seed)
   
@@ -244,9 +251,9 @@ generate_product_catalog <- function(n_products = 500, seed = 42) {
     
     # Launch date (newer products in tech, older in books)
     launch_date = case_when(
-      category == "Electronics" ~ sample(seq(as.Date("2022-01-01"), Sys.Date(), by = "day"), n_products, replace = TRUE),
-      category == "Books" ~ sample(seq(as.Date("2018-01-01"), Sys.Date(), by = "day"), n_products, replace = TRUE),
-      TRUE ~ sample(seq(as.Date("2020-01-01"), Sys.Date(), by = "day"), n_products, replace = TRUE)
+      category == "Electronics" ~ sample(seq(as.Date("2022-01-01"), DEMO_REFERENCE_DATE, by = "day"), n_products, replace = TRUE),
+      category == "Books" ~ sample(seq(as.Date("2018-01-01"), DEMO_REFERENCE_DATE, by = "day"), n_products, replace = TRUE),
+      TRUE ~ sample(seq(as.Date("2020-01-01"), DEMO_REFERENCE_DATE, by = "day"), n_products, replace = TRUE)
     ),
     
     # Inventory status
@@ -295,7 +302,7 @@ generate_product_catalog <- function(n_products = 500, seed = 42) {
 generate_transaction_data <- function(customers, products, 
                                     n_transactions = 5000,
                                     start_date = as.Date("2023-01-01"),
-                                    end_date = Sys.Date(),
+                                    end_date = DEMO_REFERENCE_DATE,
                                     seed = 42) {
   
   set.seed(seed)
@@ -471,7 +478,7 @@ generate_seasonal_weights <- function(start_date, end_date) {
 #' @return Data frame with time series data
 #' @export
 generate_timeseries_data <- function(start_date = as.Date("2020-01-01"),
-                                    end_date = Sys.Date(),
+                                    end_date = DEMO_REFERENCE_DATE,
                                     frequency = "daily",
                                     trend_type = "linear",
                                     seasonality_strength = 0.3,
@@ -743,7 +750,7 @@ generate_survey_data <- function(n_responses = 500,
   # Add response metadata
   respondents <- respondents %>%
     mutate(
-      survey_date = sample(seq(as.Date("2024-01-01"), Sys.Date(), by = "day"), 
+      survey_date = sample(seq(as.Date("2024-01-01"), DEMO_REFERENCE_DATE, by = "day"), 
                           n_responses, replace = TRUE),
       total_questions_answered = rowSums(!is.na(select(., starts_with("Q")))),
       completion_rate = round(total_questions_answered / n_questions * 100, 1),
@@ -769,7 +776,7 @@ generate_survey_data <- function(n_responses = 500,
 #' @export
 generate_financial_data <- function(symbol = "DEMO",
                                    start_date = as.Date("2020-01-01"),
-                                   end_date = Sys.Date(),
+                                   end_date = DEMO_REFERENCE_DATE,
                                    initial_price = 100,
                                    volatility = 0.02,
                                    trend_strength = 0.0005,
@@ -861,7 +868,7 @@ generate_financial_data <- function(symbol = "DEMO",
 generate_comprehensive_business_data <- function(n_customers = 1000,
                                                 n_products = 200,
                                                 n_transactions = 5000,
-                                                date_range = c(as.Date("2023-01-01"), Sys.Date()),
+                                                date_range = c(as.Date("2023-01-01"), DEMO_REFERENCE_DATE),
                                                 seed = 42) {
   
   set.seed(seed)
