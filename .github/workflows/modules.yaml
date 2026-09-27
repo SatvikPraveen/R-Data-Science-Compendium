@@ -30,23 +30,37 @@ jobs:
         with:
           use-public-rspm: true
 
-      - name: Discover module dependencies
-        id: deps
+      - name: Install pak
         run: |
-          pkgs <- system2("Rscript", c("modules/install-dependencies.R", "--list"), stdout = TRUE)
-          cran <- rownames(available.packages(repos = "https://cloud.r-project.org"))
-          missing <- setdiff(pkgs, cran)
-          if (length(missing)) message("Not on CRAN (skipped): ", paste(missing, collapse = ", "))
-          pkgs <- intersect(pkgs, cran)
-          cat(sprintf("pkgs=%s\n", paste0("any::", pkgs, collapse = " ")),
-              file = Sys.getenv("GITHUB_OUTPUT"), append = TRUE)
+          install.packages("pak", repos = sprintf(
+            "https://r-lib.github.io/p/pak/stable/%s/%s/%s",
+            .Platform$pkgType, R.Version()$os, R.Version()$arch))
         shell: Rscript {0}
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
+      - name: Cache the R library
+        uses: actions/cache@v4
         with:
-          dependencies: '"hard"'
-          extra-packages: ${{ steps.deps.outputs.pkgs }}
-          cache-version: modules-1
+          path: ${{ env.R_LIBS_USER }}
+          key: modules-${{ runner.os }}-r-${{ hashFiles('modules/**/*.R', 'modules/**/*.Rmd', 'shiny-apps/**/*.R') }}
+          restore-keys: modules-${{ runner.os }}-r-
+
+      # pak installs binaries from Posit Package Manager and resolves the
+      # Ubuntu system libraries they need (it can use sudo on the runner).
+      - name: Install module dependencies
+        timeout-minutes: 60
+        run: |
+          pkgs <- system2("Rscript", c("modules/install-dependencies.R", "--list"), stdout = TRUE)
+          cran <- rownames(available.packages())
+          skipped <- setdiff(pkgs, cran)
+          if (length(skipped)) message("Not on CRAN (skipped): ", paste(skipped, collapse = ", "))
+          # Leave already-installed packages (including R's recommended
+          # packages such as MASS or boot) alone; asking pak to reinstall
+          # them causes dependency conflicts.
+          todo <- setdiff(intersect(pkgs, cran), rownames(installed.packages()))
+          message("Installing ", length(todo), " packages")
+          if (length(todo)) pak::pkg_install(todo, upgrade = FALSE, ask = FALSE)
+        shell: Rscript {0}
 
       - name: Run modules, case studies and apps
+        timeout-minutes: 45
         run: Rscript modules/check-modules.R
