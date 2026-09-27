@@ -148,8 +148,9 @@ scenarios × 1,000 replicates.
 Bias of CV estimates
 
 The full write-up, with tables and figures, is
-[`analysis/paper/paper.Rmd`](https://satvikpraveen.github.io/R-Data-Science-Compendium/analysis/paper/paper.Rmd).
-The rendered, self-contained version is `analysis/paper/paper.html`.
+[`analysis/paper/paper.Rmd`](https://satvikpraveen.github.io/R-Data-Science-Compendium/analysis/paper/paper.Rmd);
+read the rendered paper on the
+[website](https://satvikpraveen.github.io/R-Data-Science-Compendium/paper.html).
 Summarised results and provenance (seed, replicates, R version,
 platform, run time) are in
 [`analysis/results/`](https://satvikpraveen.github.io/R-Data-Science-Compendium/analysis/results).
@@ -180,10 +181,16 @@ committed results.
 See
 [`PROJECT_STRUCTURE.md`](https://satvikpraveen.github.io/R-Data-Science-Compendium/PROJECT_STRUCTURE.md).
 In short: `R/`, `man/`, `tests/` and `vignettes/` form the package;
-`analysis/` is the compendium; `modules/` and `shiny-apps/` hold the
-earlier stand-alone tutorial scripts, case studies and Shiny demos.
-Those are kept for learning purposes but are not part of the tested
-package.
+`analysis/` is the compendium; `modules/` and `shiny-apps/` hold
+stand-alone tutorial scripts, four R Markdown case studies on simulated
+data, and three Shiny apps. They are not part of the package, but a
+separate CI workflow runs every module’s demo, renders every case study
+and starts every app:
+
+``` sh
+Rscript modules/install-dependencies.R   # about 150 packages, found by scanning the code
+Rscript modules/check-modules.R          # 26 scripts, 4 case studies, 3 apps
+```
 
 ## Development
 

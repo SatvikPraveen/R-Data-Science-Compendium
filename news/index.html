@@ -69,7 +69,8 @@
 <h3 id="infrastructure-0-2-0">Infrastructure<a class="anchor" aria-label="anchor" href="#infrastructure-0-2-0"></a></h3>
 <ul><li>R CMD check on Linux, macOS and Windows (R 4.1 to devel), coverage, lintr and pkgdown workflows.</li>
 <li>Reproducible Docker image and a real <code>renv.lock</code>.</li>
-<li>The previous tutorial scripts moved from <code>R/</code> to <code>modules/</code>.</li>
+<li>The previous tutorial scripts moved from <code>R/</code> to <code>modules/</code>. All 26 scripts, 4 case studies and 3 Shiny apps now run (previously 6 scripts did, and no case study rendered) and are exercised in CI by <code>modules/check-modules.R</code>.</li>
+<li>The case studies no longer contain hard-coded “results”: every reported number is computed from the (simulated) data, and several methodological errors were fixed, e.g. model selection on the test set, <code>cor()^2</code> used as out-of-sample R², and misaligned cluster labels.</li>
 </ul></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -218,7 +218,7 @@
 <div class="float">
 <img src="analysis/figures/cv-bias.png" alt="Bias of CV estimates"><div class="figcaption">Bias of CV estimates</div>
 </div>
-<p>The full write-up, with tables and figures, is <a href="analysis/paper/paper.Rmd"><code>analysis/paper/paper.Rmd</code></a>. The rendered, self-contained version is <code>analysis/paper/paper.html</code>. Summarised results and provenance (seed, replicates, R version, platform, run time) are in <a href="analysis/results"><code>analysis/results/</code></a>.</p>
+<p>The full write-up, with tables and figures, is <a href="analysis/paper/paper.Rmd"><code>analysis/paper/paper.Rmd</code></a>; read the rendered paper on the <a href="https://satvikpraveen.github.io/R-Data-Science-Compendium/paper.html">website</a>. Summarised results and provenance (seed, replicates, R version, platform, run time) are in <a href="analysis/results"><code>analysis/results/</code></a>.</p>
 <div class="section level3">
 <h3 id="reproducing-the-results">Reproducing the results<a class="anchor" aria-label="anchor" href="#reproducing-the-results"></a>
 </h3>
@@ -235,21 +235,23 @@
 <div class="section level2">
 <h2 id="repository-layout">Repository layout<a class="anchor" aria-label="anchor" href="#repository-layout"></a>
 </h2>
-<p>See <a href="PROJECT_STRUCTURE.html"><code>PROJECT_STRUCTURE.md</code></a>. In short: <code>R/</code>, <code>man/</code>, <code>tests/</code> and <code>vignettes/</code> form the package; <code>analysis/</code> is the compendium; <code>modules/</code> and <code>shiny-apps/</code> hold the earlier stand-alone tutorial scripts, case studies and Shiny demos. Those are kept for learning purposes but are not part of the tested package.</p>
+<p>See <a href="PROJECT_STRUCTURE.html"><code>PROJECT_STRUCTURE.md</code></a>. In short: <code>R/</code>, <code>man/</code>, <code>tests/</code> and <code>vignettes/</code> form the package; <code>analysis/</code> is the compendium; <code>modules/</code> and <code>shiny-apps/</code> hold stand-alone tutorial scripts, four R Markdown case studies on simulated data, and three Shiny apps. They are not part of the package, but a separate CI workflow runs every module’s demo, renders every case study and starts every app:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="ex">Rscript</span> modules/install-dependencies.R   <span class="co"># about 150 packages, found by scanning the code</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="ex">Rscript</span> modules/check-modules.R          <span class="co"># 26 scripts, 4 case studies, 3 apps</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="development">Development<a class="anchor" aria-label="anchor" href="#development"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">make</span> test      <span class="co"># testthat suite</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">make</span> lint      <span class="co"># lintr (must be clean)</span></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">make</span> check     <span class="co"># R CMD check --as-cran</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="fu">make</span> site      <span class="co"># pkgdown website</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">make</span> test      <span class="co"># testthat suite</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">make</span> lint      <span class="co"># lintr (must be clean)</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="fu">make</span> check     <span class="co"># R CMD check --as-cran</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="fu">make</span> site      <span class="co"># pkgdown website</span></span></code></pre></div>
 <p>CI runs R CMD check on Linux, macOS and Windows for R 4.1, oldrel, release and devel. See <a href="CONTRIBUTING.html"><code>CONTRIBUTING.md</code></a> for the validation standards expected of new methods.</p>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"RDataScienceCompendium"</span><span class="op">)</span></span></code></pre></div>
 <p>or use the “Cite this repository” button on GitHub, which reads <a href="CITATION.cff"><code>CITATION.cff</code></a>.</p>
 </div>
@@ -317,6 +319,8 @@
 <li><a href="https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/test-coverage.yaml" class="external-link"><img src="https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/test-coverage.yaml/badge.svg" alt="test-coverage"></a></li>
 <li><a href="https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/lint.yaml" class="external-link"><img src="https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/lint.yaml/badge.svg" alt="lint"></a></li>
 <li><a href="https://satvikpraveen.github.io/R-Data-Science-Compendium/"><img src="https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a></li>
+<li><a href="https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/analysis.yaml" class="external-link"><img src="https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/analysis.yaml/badge.svg" alt="analysis"></a></li>
+<li><a href="https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/modules.yaml" class="external-link"><img src="https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/modules.yaml/badge.svg" alt="modules"></a></li>
 <li><a href="LICENSE.html"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a></li>
 </ul>
 </div>
