@@ -1,4 +1,4 @@
-# Measure test coverage with covr and upload it to Codecov.
+# Measure test coverage with covr and publish it in the job summary.
 on:
   push:
     branches: [main]
@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     steps:
       - uses: actions/checkout@v7
@@ -25,7 +24,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::covr, any::xml2
+          extra-packages: any::covr
           needs: coverage
 
       - name: Test coverage
@@ -45,18 +44,7 @@ jobs:
             sprintf("| `%s` | %.1f%% |", names(files), files)
           )
           cat(summary_md, sep = "\n", file = Sys.getenv("GITHUB_STEP_SUMMARY"), append = TRUE)
-          covr::to_cobertura(cov)
         shell: Rscript {0}
-
-      # Uploads only once a CODECOV_TOKEN repository secret is configured.
-      - uses: codecov/codecov-action@v7
-        if: env.CODECOV_TOKEN != ''
-        with:
-          fail_ci_if_error: false
-          files: ./cobertura.xml
-          plugins: noop
-          disable_search: true
-          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Show testthat output
         if: always()

@@ -10,7 +10,6 @@
 ^CONTRIBUTING\.md$
 ^CODE_OF_CONDUCT\.md$
 ^PROJECT_STRUCTURE\.md$
-^codecov\.yml$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
