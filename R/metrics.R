@@ -216,8 +216,10 @@ calibration <- function(truth, prob, level = 0.95, eps = 1e-8) {
   check_level(level)
   lp <- stats::qlogis(pmin(pmax(prob, eps), 1 - eps))
   z <- stats::qnorm((1 + level) / 2)
-  fit_int <- stats::glm(y ~ 1, offset = lp, family = stats::binomial())
-  fit_slope <- stats::glm(y ~ lp, family = stats::binomial())
+  d <- data.frame(y = y, lp = lp)
+  fit_int <- stats::glm(y ~ 1, offset = lp, family = stats::binomial(),
+                        data = d)
+  fit_slope <- stats::glm(y ~ lp, family = stats::binomial(), data = d)
   est <- c(stats::coef(fit_int)[[1L]], stats::coef(fit_slope)[[2L]])
   se <- c(sqrt(diag(stats::vcov(fit_int)))[[1L]],
           sqrt(diag(stats::vcov(fit_slope)))[[2L]])

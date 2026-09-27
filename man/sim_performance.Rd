@@ -51,7 +51,7 @@ required columns are supplied) are:\tabular{lll}{
    \code{bias} \tab \eqn{\bar{\hat\theta} - \theta} \tab \eqn{\sqrt{S^2_{\hat\theta}/n}} \cr
    \code{empirical_se} \tab \eqn{S_{\hat\theta}} \tab \eqn{S_{\hat\theta}/\sqrt{2(n-1)}} \cr
    \code{mse} \tab \eqn{n^{-1}\sum(\hat\theta_i - \theta)^2} \tab see reference \cr
-   \code{model_se} \tab \eqn{\sqrt{n^{-1}\sum \widehat{SE}_i^2}} \tab \eqn{\sqrt{\mathrm{Var}(\widehat{SE}^2)/(4n\,\mathrm{ModSE}^2)}} \cr
+   \code{model_se} \tab \eqn{\sqrt{n^{-1}\sum \widehat{SE}_i^2}} \tab see reference \cr
    \code{rel_error_model_se} \tab \eqn{100(\mathrm{ModSE}/\mathrm{EmpSE} - 1)} \tab see reference \cr
    \code{coverage} \tab \eqn{n^{-1}\sum 1(L_i \le \theta \le U_i)} \tab \eqn{\sqrt{C(1-C)/n}} \cr
    \code{be_coverage} \tab coverage of \eqn{\bar{\hat\theta}} (bias-eliminated) \tab \eqn{\sqrt{C(1-C)/n}} \cr

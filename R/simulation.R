@@ -224,7 +224,7 @@ print.rdsc_simulation <- function(x, ...) {
 #' | `bias` | \eqn{\bar{\hat\theta} - \theta} | \eqn{\sqrt{S^2_{\hat\theta}/n}} |
 #' | `empirical_se` | \eqn{S_{\hat\theta}} | \eqn{S_{\hat\theta}/\sqrt{2(n-1)}} |
 #' | `mse` | \eqn{n^{-1}\sum(\hat\theta_i - \theta)^2} | see reference |
-#' | `model_se` | \eqn{\sqrt{n^{-1}\sum \widehat{SE}_i^2}} | \eqn{\sqrt{\mathrm{Var}(\widehat{SE}^2)/(4n\,\mathrm{ModSE}^2)}} |
+#' | `model_se` | \eqn{\sqrt{n^{-1}\sum \widehat{SE}_i^2}} | see reference |
 #' | `rel_error_model_se` | \eqn{100(\mathrm{ModSE}/\mathrm{EmpSE} - 1)} | see reference |
 #' | `coverage` | \eqn{n^{-1}\sum 1(L_i \le \theta \le U_i)} | \eqn{\sqrt{C(1-C)/n}} |
 #' | `be_coverage` | coverage of \eqn{\bar{\hat\theta}} (bias-eliminated) | \eqn{\sqrt{C(1-C)/n}} |
@@ -307,42 +307,40 @@ sim_performance <- function(results, true, estimate = "estimate", se = "se",
     th <- g[[estimate]]
     tv <- g$.true
     rows <- list()
-    add <- function(measure, est, mcse) {
-      rows[[length(rows) + 1L]] <<- data.frame(
-        measure = measure, estimate = est, mcse = mcse,
-        stringsAsFactors = FALSE
-      )
+    row <- function(measure, est, mcse) {
+      data.frame(measure = measure, estimate = est, mcse = mcse,
+                 stringsAsFactors = FALSE)
     }
     if (n >= 2L) {
       err <- th - tv
       emp_se <- stats::sd(th)
-      add("bias", mean(err), stats::sd(th) / sqrt(n))
-      add("empirical_se", emp_se, emp_se / sqrt(2 * (n - 1)))
+      rows[[length(rows) + 1L]] <- row("bias", mean(err), stats::sd(th) / sqrt(n))
+      rows[[length(rows) + 1L]] <- row("empirical_se", emp_se, emp_se / sqrt(2 * (n - 1)))
       mse <- mean(err^2)
-      add("mse", mse, sqrt(sum((err^2 - mse)^2) / (n * (n - 1))))
+      rows[[length(rows) + 1L]] <- row("mse", mse, sqrt(sum((err^2 - mse)^2) / (n * (n - 1))))
       if (has(se)) {
         s2 <- g[[se]]^2
         mod_se <- sqrt(mean(s2))
         v_s2 <- stats::var(s2)
-        add("model_se", mod_se, sqrt(v_s2 / (4 * n * mod_se^2)))
+        rows[[length(rows) + 1L]] <- row("model_se", mod_se, sqrt(v_s2 / (4 * n * mod_se^2)))
         ratio <- mod_se / emp_se
-        add("rel_error_model_se", 100 * (ratio - 1),
+        rows[[length(rows) + 1L]] <- row("rel_error_model_se", 100 * (ratio - 1),
             100 * ratio * sqrt(v_s2 / (4 * n * mod_se^4) + 1 / (2 * (n - 1))))
       }
       if (has(lower) && has(upper)) {
         lo <- g[[lower]]
         up <- g[[upper]]
         cover <- mean(lo <= tv & tv <= up, na.rm = TRUE)
-        add("coverage", cover, sqrt(cover * (1 - cover) / n))
+        rows[[length(rows) + 1L]] <- row("coverage", cover, sqrt(cover * (1 - cover) / n))
         be <- mean(lo <= mean(th) & mean(th) <= up, na.rm = TRUE)
-        add("be_coverage", be, sqrt(be * (1 - be) / n))
+        rows[[length(rows) + 1L]] <- row("be_coverage", be, sqrt(be * (1 - be) / n))
         w <- up - lo
-        add("mean_width", mean(w, na.rm = TRUE),
+        rows[[length(rows) + 1L]] <- row("mean_width", mean(w, na.rm = TRUE),
             stats::sd(w, na.rm = TRUE) / sqrt(n))
       }
       if (has(p_value)) {
         rej <- mean(g[[p_value]] <= alpha, na.rm = TRUE)
-        add("rejection", rej, sqrt(rej * (1 - rej) / n))
+        rows[[length(rows) + 1L]] <- row("rejection", rej, sqrt(rej * (1 - rej) / n))
       }
     }
     res <- if (length(rows)) {

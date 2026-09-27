@@ -171,7 +171,6 @@ nested_cv <- function(data, candidates, outcome, metric = rmse,
   strata <- resolve_column(strata, data, "strata")
   n <- nrow(data)
   best_of <- if (minimize) which.min else which.max
-  y <- data[[outcome]]
 
   score_fold <- function(fitter, train, test) {
     model <- fitter(train)
