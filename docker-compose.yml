@@ -1,15 +1,17 @@
-version: '3.8'
-
+# Convenience wrapper around docker/Dockerfile.
+#
+#   docker compose run --rm check      # R CMD check inside the container
+#   docker compose run --rm analysis   # regenerate results, figures and paper
 services:
-  r-dev:
+  check:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    ports:
-      - "8787:8787"
-      - "3838:3838"
+    image: rdsc:latest
+    command: make check
+
+  analysis:
+    image: rdsc:latest
     volumes:
-      - .:/project
-    environment:
-      - DISABLE_AUTH=true
-      - ROOT=TRUE
+      - ./analysis:/project/analysis
+    command: make analysis

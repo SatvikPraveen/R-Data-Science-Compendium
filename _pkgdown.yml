@@ -1,0 +1,48 @@
+url: https://satvikpraveen.github.io/R-Data-Science-Compendium/
+
+template:
+  bootstrap: 5
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github]
+
+articles:
+  - title: Methods
+    navbar: ~
+    contents:
+      - resampling-inference
+      - simulation-studies
+      - model-evaluation
+
+reference:
+  - title: Resampling inference
+    contents:
+      - boot_ci
+      - jackknife_influence
+      - perm_test
+  - title: Effect sizes
+    contents:
+      - effect_sizes
+  - title: Simulation studies
+    contents:
+      - run_simulation
+      - sim_performance
+      - sim_n_required
+      - rng_streams
+  - title: Model evaluation
+    contents:
+      - make_folds
+      - cross_validate
+      - nested_cv
+      - auc
+      - scoring_rules
+      - calibration
+      - regression_metrics
+  - title: Data generation
+    contents:
+      - simulate_data
+  - title: Package
+    contents:
+      - RDataScienceCompendium-package

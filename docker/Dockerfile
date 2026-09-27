@@ -1,31 +1,30 @@
-FROM rocker/verse:4.4.0
+# Reproducible computational environment for the compendium.
+#
+# rocker/r-ver images pin R and point CRAN at a dated Posit Package Manager
+# snapshot, so every build installs identical package versions.
+#
+#   docker build -f docker/Dockerfile -t rdsc .
+#   docker run --rm rdsc                      # R CMD check
+#   docker run --rm -v "$PWD/analysis:/project/analysis" rdsc make analysis
+
+FROM rocker/r-ver:4.5.2
+
+LABEL org.opencontainers.image.title="RDataScienceCompendium" \
+      org.opencontainers.image.source="https://github.com/SatvikPraveen/R-Data-Science-Compendium" \
+      org.opencontainers.image.licenses="MIT"
+
+RUN /rocker_scripts/install_pandoc.sh \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends make qpdf \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /project
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    libssl-dev \
-    libcurl4-openssl-dev \
-    libxml2-dev \
-    libgit2-dev \
-    libpng-dev \
-    libjpeg-dev \
-    libcairo2-dev \
-    libxt-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Install dependencies first so this layer is cached across code changes.
+COPY DESCRIPTION setup.R ./
+RUN Rscript setup.R
 
-# Copy renv files
-COPY renv.lock renv.lock
-COPY renv/activate.R renv/activate.R
-
-# Install renv and restore packages
-RUN R -e "install.packages('renv')"
-RUN R -e "renv::restore()"
-
-# Copy project files
 COPY . .
+RUN R CMD INSTALL --no-multiarch .
 
-# Expose ports
-EXPOSE 8787 3838
-
-CMD ["R"]
+CMD ["make", "check"]

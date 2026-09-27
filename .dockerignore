@@ -1,0 +1,7 @@
+.git
+.github
+.claude
+docs
+*.Rcheck
+*.tar.gz
+analysis/results/*-replicates.rds

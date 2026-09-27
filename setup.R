@@ -1,76 +1,36 @@
 #!/usr/bin/env Rscript
+# Install everything needed to develop the package and reproduce the analysis.
+#
+#   Rscript setup.R
+#
+# Package dependencies are read from DESCRIPTION, so this list never drifts
+# from what R CMD check uses. For a pinned, fully reproducible environment use
+# the Docker image instead (see docker/Dockerfile).
 
-# =============================================================================
-# R Data Science Portfolio Project Setup
-# =============================================================================
-
-cat("🎯 Initializing R Data Science Portfolio Project\n\n")
-
-# Check R version
-r_version <- getRversion()
-if (r_version < "4.2.0") {
-  warning("R version 4.2.0 or higher recommended. Current version: ", r_version)
+repos <- getOption("repos")
+if (is.null(repos) || identical(unname(repos["CRAN"]), "@CRAN@")) {
+  repos <- c(CRAN = "https://cloud.r-project.org")
 }
 
-# Essential packages for the project
-essential_packages <- c(
-  # Core tidyverse
-  "dplyr", "ggplot2", "readr", "tidyr", "stringr", "purrr", "tibble", "forcats",
-  
-  # Data manipulation and import
-  "data.table", "readxl", "haven", "jsonlite", "DBI", "RSQLite",
-  
-  # Visualization
-  "plotly", "ggthemes", "RColorBrewer", "viridis", "scales", "patchwork",
-  
-  # Statistical analysis
-  "broom", "modelr", "car", "lme4", "survival", "forecast", "tseries",
-  
-  # Machine learning
-  "caret", "randomForest", "xgboost", "e1071", "cluster", "factoextra",
-  
-  # Interactive applications
-  "shiny", "shinydashboard", "DT", "leaflet", "crosstalk",
-  
-  # Development tools
-  "renv", "devtools", "usethis", "testthat", "roxygen2", "pkgdown",
-  "lintr", "styler", "here", "fs", "glue",
-  
-  # Documentation and reporting
-  "rmarkdown", "knitr", "bookdown", "flexdashboard",
-  
-  # Advanced topics
-  "R6", "future", "parallel", "Rcpp", "profvis"
-)
-
-# Function to install packages if missing
-install_if_missing <- function(packages) {
-  new_packages <- packages[!(packages %in% installed.packages()[,"Package"])]
-  if(length(new_packages)) {
-    cat("📦 Installing missing packages:", paste(new_packages, collapse = ", "), "\n")
-    install.packages(new_packages, repos = "https://cran.rstudio.com/", dependencies = TRUE)
-  } else {
-    cat("✅ All essential packages already installed\n")
-  }
+desc <- read.dcf("DESCRIPTION", fields = c("Imports", "Suggests"))
+parse_deps <- function(x) {
+  if (is.na(x)) return(character())
+  deps <- trimws(strsplit(x, ",")[[1]])
+  sub("\\s*\\(.*\\)$", "", deps)
 }
+base_pkgs <- rownames(installed.packages(priority = "base"))
+pkg_deps <- setdiff(c(parse_deps(desc[, "Imports"]), parse_deps(desc[, "Suggests"])),
+                    base_pkgs)
 
-# Install missing packages
-install_if_missing(essential_packages)
+dev_tools <- c("roxygen2", "lintr", "covr", "pkgdown", "rcmdcheck", "styler")
+analysis_deps <- c("rprojroot", "future", "future.apply", "rmarkdown", "knitr")
 
-# Initialize renv for reproducibility
-if (!file.exists("renv.lock")) {
-  cat("🔧 Initializing renv for dependency management...\n")
-  renv::init()
+wanted <- unique(c(pkg_deps, dev_tools, analysis_deps))
+missing <- setdiff(wanted, rownames(installed.packages()))
+
+if (length(missing)) {
+  message("Installing: ", paste(missing, collapse = ", "))
+  install.packages(missing, repos = repos)
 } else {
-  cat("✅ renv already initialized\n")
+  message("All dependencies are already installed.")
 }
-
-cat("✅ Setup completed successfully!\n\n")
-cat("🚀 Next steps:\n")
-cat("1. Open VS Code: code .\n")
-cat("2. Install recommended extensions when prompted\n") 
-cat("3. Start exploring R/ modules\n")
-cat("4. Run tests: Rscript -e \"testthat::test_dir('tests/')\"\n")
-cat("5. Commit your changes: git add . && git commit -m 'Initial setup'\n\n")
-
-cat("📚 Happy coding! Your R portfolio project is ready.\n")
