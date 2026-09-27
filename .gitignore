@@ -69,3 +69,7 @@ Thumbs.db
 
 # Local Claude Code settings
 .claude/settings.local.json
+
+# Replicate-level simulation output is large and fully regenerable from the
+# seeds; only the summarised results are tracked.
+analysis/results/*-replicates.rds
