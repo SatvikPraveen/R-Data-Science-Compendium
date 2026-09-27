@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     steps:
       - uses: actions/checkout@v7
@@ -35,11 +36,21 @@ jobs:
             install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
           )
           print(cov)
-          cat(sprintf("Total coverage: %.1f%%\n", covr::percent_coverage(cov)))
+          pct <- covr::percent_coverage(cov)
+          cat(sprintf("Total coverage: %.1f%%\n", pct))
+          files <- covr::coverage_to_list(cov)$filecoverage
+          summary_md <- c(
+            sprintf("## Test coverage: %.1f%%", pct), "",
+            "| File | Coverage |", "|---|---|",
+            sprintf("| `%s` | %.1f%% |", names(files), files)
+          )
+          cat(summary_md, sep = "\n", file = Sys.getenv("GITHUB_STEP_SUMMARY"), append = TRUE)
           covr::to_cobertura(cov)
         shell: Rscript {0}
 
+      # Uploads only once a CODECOV_TOKEN repository secret is configured.
       - uses: codecov/codecov-action@v7
+        if: env.CODECOV_TOKEN != ''
         with:
           fail_ci_if_error: false
           files: ./cobertura.xml
