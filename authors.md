@@ -7,7 +7,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/SatvikPraveen/R-Data-Science-Compendium/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/SatvikPraveen/R-Data-Science-Compendium/blob/v0.2.0/inst/CITATION)
 
 Praveen, S. (2026). RDataScienceCompendium: Reproducible Resampling,
 Simulation and Model-Evaluation Methods. R package version 0.2.0.
