@@ -146,3 +146,11 @@ test_that("sim_n_required implements the planning formulas", {
   expect_equal(sim_n_required(0.01, "bias", sd = 0.5), 2500L)
   expect_error(sim_n_required(0.01, "bias"), class = "rdsc_error_input")
 })
+
+test_that("the replicate count does not clash with a scenario variable `n`", {
+  res <- run_simulation(gen, ana, 5, data.frame(n = c(5, 8)), seed = 1)
+  perf <- sim_performance(res, true = 0)
+  expect_false(anyDuplicated(names(perf)) > 0)
+  expect_setequal(unique(perf$n), c(5, 8))
+  expect_true(all(perf$n_rep == 5))
+})

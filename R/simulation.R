@@ -245,7 +245,9 @@ print.rdsc_simulation <- function(x, ...) {
 #'   [run_simulation()] plus a `method` column, if present.
 #'
 #' @return A data frame of class `rdsc_performance` with the grouping
-#'   columns and `measure`, `estimate`, `mcse`, `n` and `n_missing`.
+#'   columns and `measure`, `estimate`, `mcse`, `n_rep` (replicates used) and
+#'   `n_missing`. The count is not called `n` so that it cannot clash with a
+#'   scenario variable of that name.
 #'
 #' @references
 #' Morris, T. P., White, I. R. and Crowther, M. J. (2019). Using simulation
@@ -349,7 +351,7 @@ sim_performance <- function(results, true, estimate = "estimate", se = "se",
       data.frame(measure = character(), estimate = numeric(),
                  mcse = numeric())
     }
-    res$n <- rep(n, nrow(res))
+    res$n_rep <- rep(n, nrow(res))
     res$n_missing <- rep(sum(!keep), nrow(res))
     if (length(by)) {
       key <- g[1L, by, drop = FALSE]

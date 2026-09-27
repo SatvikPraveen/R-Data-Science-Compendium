@@ -33,7 +33,9 @@ and the p-value. Measures whose columns are absent are skipped.}
 }
 \value{
 A data frame of class \code{rdsc_performance} with the grouping
-columns and \code{measure}, \code{estimate}, \code{mcse}, \code{n} and \code{n_missing}.
+columns and \code{measure}, \code{estimate}, \code{mcse}, \code{n_rep} (replicates used) and
+\code{n_missing}. The count is not called \code{n} so that it cannot clash with a
+scenario variable of that name.
 }
 \description{
 Summarises the output of \code{\link[=run_simulation]{run_simulation()}} (or any data frame of
