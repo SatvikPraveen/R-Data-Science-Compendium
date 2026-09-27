@@ -1,5 +1,7 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://satvikpraveen.github.io/R-Data-Science-Compendium/404.html</loc></url>
+<url><loc>https://satvikpraveen.github.io/R-Data-Science-Compendium/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://satvikpraveen.github.io/R-Data-Science-Compendium/CONTRIBUTING.html</loc></url>
 <url><loc>https://satvikpraveen.github.io/R-Data-Science-Compendium/LICENSE-text.html</loc></url>
 <url><loc>https://satvikpraveen.github.io/R-Data-Science-Compendium/LICENSE.html</loc></url>
 <url><loc>https://satvikpraveen.github.io/R-Data-Science-Compendium/PROJECT_STRUCTURE.html</loc></url>
@@ -9,6 +11,7 @@
 <url><loc>https://satvikpraveen.github.io/R-Data-Science-Compendium/articles/simulation-studies.html</loc></url>
 <url><loc>https://satvikpraveen.github.io/R-Data-Science-Compendium/authors.html</loc></url>
 <url><loc>https://satvikpraveen.github.io/R-Data-Science-Compendium/index.html</loc></url>
+<url><loc>https://satvikpraveen.github.io/R-Data-Science-Compendium/news/index.html</loc></url>
 <url><loc>https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/RDataScienceCompendium-package.html</loc></url>
 <url><loc>https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/auc.html</loc></url>
 <url><loc>https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/boot_ci.html</loc></url>
