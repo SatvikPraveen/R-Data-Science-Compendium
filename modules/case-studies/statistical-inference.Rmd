@@ -52,14 +52,14 @@ library(ggridges)
 library(ggpubr)
 
 # Source custom functions
-if (file.exists("../R/utils/data-generators.R")) {
-  source("../R/utils/data-generators.R")
+if (file.exists("../utils/data-generators.R")) {
+  source("../utils/data-generators.R")
 }
-if (file.exists("../R/04-statistical-analysis/hypothesis-testing.R")) {
-  source("../R/04-statistical-analysis/hypothesis-testing.R")
+if (file.exists("../04-statistical-analysis/hypothesis-testing.R")) {
+  source("../04-statistical-analysis/hypothesis-testing.R")
 }
-if (file.exists("../R/utils/plotting-helpers.R")) {
-  source("../R/utils/plotting-helpers.R")
+if (file.exists("../utils/plotting-helpers.R")) {
+  source("../utils/plotting-helpers.R")
 }
 
 # Set theme

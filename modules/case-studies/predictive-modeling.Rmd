@@ -51,17 +51,17 @@ library(modelr)
 library(broom)
 
 # Source custom functions
-if (file.exists("../R/utils/data-generators.R")) {
-  source("../R/utils/data-generators.R")
+if (file.exists("../utils/data-generators.R")) {
+  source("../utils/data-generators.R")
 }
-if (file.exists("../R/05-machine-learning/supervised-learning.R")) {
-  source("../R/05-machine-learning/supervised-learning.R")
+if (file.exists("../05-machine-learning/supervised-learning.R")) {
+  source("../05-machine-learning/supervised-learning.R")
 }
-if (file.exists("../R/05-machine-learning/feature-engineering.R")) {
-  source("../R/05-machine-learning/feature-engineering.R")
+if (file.exists("../05-machine-learning/feature-engineering.R")) {
+  source("../05-machine-learning/feature-engineering.R")
 }
-if (file.exists("../R/utils/plotting-helpers.R")) {
-  source("../R/utils/plotting-helpers.R")
+if (file.exists("../utils/plotting-helpers.R")) {
+  source("../utils/plotting-helpers.R")
 }
 
 # Set theme

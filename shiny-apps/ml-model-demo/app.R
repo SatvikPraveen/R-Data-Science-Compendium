@@ -19,8 +19,8 @@ library(corrplot)
 library(viridis)
 
 # Source custom functions if available
-if (file.exists("../../R/utils/data-generators.R")) {
-  source("../../R/utils/data-generators.R")
+if (file.exists("../../modules/utils/data-generators.R")) {
+  source("../../modules/utils/data-generators.R")
 }
 
 # Define UI
