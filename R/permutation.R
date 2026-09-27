@@ -114,12 +114,13 @@ perm_test <- function(x, y = NULL, statistic = NULL, paired = FALSE, mu = 0,
     n_ref <- choose(n, nx)
     t_obs <- statistic(x, y)
     method <- "two-sample permutation test"
-    compute <- function(in_x) statistic(pooled[in_x], pooled[-in_x])
+    compute_split <- function(in_x) statistic(pooled[in_x], pooled[-in_x])
     enumerate <- function() {
-      apply(utils::combn(n, nx), 2L, compute)
+      apply(utils::combn(n, nx), 2L, compute_split)
     }
     draw <- function() {
-      vapply(seq_len(R), function(r) compute(sample.int(n, nx)), numeric(1))
+      vapply(seq_len(R), function(r) compute_split(sample.int(n, nx)),
+             numeric(1))
     }
   } else {
     if (paired) {
@@ -135,17 +136,17 @@ perm_test <- function(x, y = NULL, statistic = NULL, paired = FALSE, mu = 0,
     n <- length(d)
     n_ref <- 2^n
     t_obs <- statistic(d)
-    compute <- function(signs) statistic(signs * d)
+    compute_flip <- function(signs) statistic(signs * d)
     enumerate <- function() {
       codes <- seq.int(0, n_ref - 1)
       vapply(codes, function(code) {
         bits <- as.integer(intToBits(code))[seq_len(n)]
-        compute(1 - 2 * bits)
+        compute_flip(1 - 2 * bits)
       }, numeric(1))
     }
     draw <- function() {
       vapply(seq_len(R), function(r) {
-        compute(sample(c(-1, 1), n, replace = TRUE))
+        compute_flip(sample(c(-1, 1), n, replace = TRUE))
       }, numeric(1))
     }
   }

@@ -35,6 +35,9 @@ predictions. The default calls \code{\link[stats:predict]{stats::predict()}} wit
 
 \item{minimize}{Logical; \code{TRUE} if smaller values of \code{metric} are better.}
 
+\item{strata}{Optional stratification for the outer and inner partitions:
+a column name or a vector of length \code{nrow(data)}; see \code{\link[=make_folds]{make_folds()}}.}
+
 \item{seed}{Optional seed; the caller's RNG state is restored on exit.}
 }
 \value{

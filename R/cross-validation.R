@@ -128,6 +128,8 @@ cross_validate <- function(data, fit, outcome, metric = rmse,
 #' @param candidates A named list of fitting functions `function(train)`.
 #' @param outer_k,inner_k Number of outer and inner folds.
 #' @param minimize Logical; `TRUE` if smaller values of `metric` are better.
+#' @param strata Optional stratification for the outer and inner partitions:
+#'   a column name or a vector of length `nrow(data)`; see [make_folds()].
 #'
 #' @return An object of class `rdsc_nested_cv` with elements `estimate` and
 #'   `se` (nested), `naive_estimate`, `naive_choice`, `outer` (per-fold
