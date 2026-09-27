@@ -1,0 +1,263 @@
+---
+title: "Small-sample interval coverage and model-selection optimism: two reproducible simulation studies"
+author: "Satvik Praveen"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    number_sections: true
+    self_contained: true
+bibliography: references.bib
+link-citations: true
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+root <- rprojroot::find_root(rprojroot::has_file("DESCRIPTION"))
+res_dir <- file.path(root, "analysis", "results")
+fig_dir <- file.path(root, "analysis", "figures")
+
+cov <- read.csv(file.path(res_dir, "coverage-performance.csv"))
+cvp <- read.csv(file.path(res_dir, "cv-selection-performance.csv"))
+sel <- read.csv(file.path(res_dir, "cv-selection-rates.csv"))
+prov_cov <- readLines(file.path(res_dir, "coverage-provenance.txt"))
+prov_cv <- readLines(file.path(res_dir, "cv-selection-provenance.txt"))
+prov <- function(lines, key) sub(paste0("^", key, ": "), "", grep(paste0("^", key, ":"), lines, value = TRUE))
+
+pct <- function(x, d = 1) sprintf(paste0("%.", d, "f%%"), 100 * x)
+get_cov <- function(n, sigma, method, measure = "coverage") {
+  cov[cov$n == n & cov$sigma == sigma & cov$method == method &
+        cov$measure == measure, ]
+}
+get_cv <- function(n, p, beta, method, aggregation = "pooled",
+                   measure = "bias") {
+  cvp[cvp$n == n & cvp$p == p & cvp$beta == beta & cvp$method == method &
+        cvp$aggregation == aggregation & cvp$measure == measure, ]
+}
+nested_pooled_bias <- cvp[cvp$measure == "bias" & cvp$method == "nested" &
+                            cvp$aggregation == "pooled", ]
+fmt <- function(row, d = 3) sprintf("%.*f (MCSE %.*f)", d, row$estimate, d, row$mcse)
+max_mcse_cov <- max(cov$mcse[cov$measure == "coverage"])
+```
+
+# Abstract {-}
+
+We report two Monte Carlo experiments, designed and reported according to the
+ADEMP framework [@morris2019], using the `RDataScienceCompendium` R package.
+**Study 1** compares five nominal 95% confidence intervals for the mean of
+log-normal data. The Student $t$ interval had the best coverage for mild to
+moderate skew at every sample size studied. With strong skew
+($\sigma = 1$), all intervals under-covered: at $n = 10$ coverage ranged
+from `r pct(min(cov$estimate[cov$measure == "coverage" & cov$n == 10 & cov$sigma == 1]))`
+(basic bootstrap) to
+`r pct(max(cov$estimate[cov$measure == "coverage" & cov$n == 10 & cov$sigma == 1]))`.
+The BCa interval was the best or joint-best bootstrap method in every
+scenario with strong skew. **Study 2** shows that reporting the cross-validated error of the
+best-performing candidate model is optimistically biased. The bias was
+largest with small samples and many candidates: at $n = 50$ with 25 noise
+candidates, the true RMSE was understated by
+`r sprintf("%.3f", -get_cv(50, 25, 0, "naive", "fold")$estimate)` on average. Nested cross-validation removed
+the selection bias, but only when the RMSE was computed from the pooled
+out-of-fold predictions. Averaging per-fold RMSEs, which is common practice,
+left a residual optimism of up to
+`r sprintf("%.3f", -min(cvp$estimate[cvp$measure == "bias" & cvp$method == "nested" & cvp$aggregation == "fold"]))`
+caused by Jensen's inequality. All results carry
+Monte Carlo standard errors (MCSEs) and can be regenerated with a single
+command.
+
+# Introduction
+
+Resampling methods are often recommended because they relax distributional
+assumptions. Whether they deliver on this promise at the sample sizes seen in
+practice is an empirical question, and simulation studies are the standard
+tool for answering it. Simulation studies are experiments, however, and their
+conclusions are only as reliable as their design and their quantification of
+Monte Carlo error [@morris2019].
+
+We study two questions that come up routinely in applied work:
+
+1. Do bootstrap confidence intervals for a mean improve on the $t$ interval
+   when the data are skewed and $n$ is small [@efron1987; @davison1997]?
+2. How optimistic is it to report the cross-validation (CV) error of the
+   model that was *chosen* by that same CV, and does nested CV fix this
+   [@varma2006; @cawley2010]?
+
+# Methods
+
+All computations use the `RDataScienceCompendium` package (version
+`r prov(prov_cov, "package_version")`). Each (scenario, replicate) pair has
+its own L'Ecuyer-CMRG random-number stream [@lecuyer2002], so results do not
+depend on how many parallel workers are used. The seeds and run times are
+listed in the provenance files in `analysis/results/`.
+
+## Study 1: interval coverage under skewness
+
+| ADEMP | Specification |
+|---|---|
+| **Aims** | Compare coverage and width of five nominal 95% intervals for a mean. |
+| **Data-generating mechanisms** | $X_i \sim \mathrm{LogNormal}(0, \sigma^2)$, $n \in \{10, 20, 40, 80\}$, $\sigma \in \{0.25, 0.5, 1\}$ (skewness 0.78, 1.75, 6.18); full factorial, 12 scenarios. |
+| **Estimand** | $\theta = E[X] = \exp(\sigma^2/2)$. |
+| **Methods** | Student $t$; nonparametric bootstrap percentile, basic, normal and BCa intervals with $R = 1999$ resamples. |
+| **Performance measures** | Coverage (primary), bias-eliminated coverage, mean width. |
+| **Replicates** | `r prov(prov_cov, "n_sim")` per scenario, so that coverage MCSE $\le 0.31$ percentage points near 95%. The largest observed coverage MCSE was `r sprintf("%.2f", 100 * max_mcse_cov)` points. |
+
+## Study 2: optimism after model selection by cross-validation
+
+| ADEMP | Specification |
+|---|---|
+| **Aims** | Quantify the bias of two estimators of the prediction error of a "select by CV, then refit" procedure. |
+| **Data-generating mechanisms** | $p$ independent $N(0,1)$ candidate predictors; $y = \beta x_1 + \varepsilon$, $\varepsilon \sim N(0,1)$; $n \in \{50, 200\}$, $p \in \{5, 25\}$, $\beta \in \{0, 0.5\}$; 8 scenarios. |
+| **Estimand** | RMSE of the final (selected and refitted) model on new data, evaluated on an independent test set of 10,000 observations. |
+| **Methods** | *Naive*: the minimum over candidates of the 5-fold CV RMSE. *Nested*: 5 $\times$ 5 nested CV. Each is computed in two ways: by averaging the per-fold RMSEs (*fold*), and from the pooled out-of-fold predictions (*pooled*). Candidates are the $p$ single-predictor linear models. |
+| **Performance measures** | Bias (primary), empirical SE and MSE of each estimator. |
+| **Replicates** | `r prov(prov_cv, "n_sim")` per scenario. |
+
+Nested CV estimates the error of the procedure when it is trained on 80% of
+the data. It is therefore expected to be slightly *pessimistic* about a
+model trained on all $n$ observations. We added the pooled variants after a
+pilot run showed nested CV to be unexpectedly *optimistic*. Our hypothesis
+was that averaging square roots of per-fold mean squared errors is biased
+downwards when test folds are small, since
+$E[\sqrt{\widehat{\mathrm{MSE}}}] \le \sqrt{E[\widehat{\mathrm{MSE}}]}$.
+The pooled variants test this hypothesis directly.
+
+# Results
+
+No replicate failed in either study
+(`r prov(prov_cov, "failed_replicates")` and
+`r prov(prov_cv, "failed_replicates")` failures).
+
+## Study 1
+
+```{r fig-coverage, fig.cap = "Figure 1. Coverage of nominal 95% intervals for a log-normal mean. Bars are ±1.96 MCSE."}
+knitr::include_graphics(file.path(fig_dir, "coverage.png"))
+```
+
+```{r tab-coverage}
+tab <- cov[cov$measure == "coverage", c("sigma", "n", "method", "estimate", "mcse")]
+tab$value <- sprintf("%.1f (%.1f)", 100 * tab$estimate, 100 * tab$mcse)
+wide <- reshape(tab[, c("sigma", "n", "method", "value")],
+                idvar = c("sigma", "n"), timevar = "method",
+                direction = "wide")
+names(wide) <- sub("^value\\.", "", names(wide))
+wide <- wide[order(wide$sigma, wide$n), c("sigma", "n", "t", "bca",
+                                           "percentile", "normal", "basic")]
+knitr::kable(wide, row.names = FALSE,
+             caption = "Table 1. Coverage, % (MCSE), of nominal 95% intervals.")
+```
+
+At $\sigma = 0.25$ and $n = 10$, the $t$ interval achieved
+`r pct(get_cov(10, 0.25, "t")$estimate)` coverage. Every bootstrap interval
+stayed below `r pct(max(sapply(c("bca", "percentile", "normal", "basic"), function(m) get_cov(10, 0.25, m)$estimate)))`.
+The bootstrap intervals are too narrow in small samples, partly because
+they use the plug-in variance, which divides by $n$ rather than $n-1$
+[@davison1997]. Under strong skew ($\sigma = 1$) the ordering changes with
+$n$. At $n = 10$ the $t$ interval
+(`r pct(get_cov(10, 1, "t")$estimate)`) and BCa
+(`r pct(get_cov(10, 1, "bca")$estimate)`) are both far from nominal. At
+$n = 80$ BCa reaches `r pct(get_cov(80, 1, "bca")$estimate)` compared with
+`r pct(get_cov(80, 1, "t")$estimate)` for $t$. The basic interval was the
+worst or tied for worst in every scenario with $\sigma \ge 0.5$.
+
+```{r tab-width}
+w <- cov[cov$measure == "mean_width" & cov$n == 20, c("sigma", "method", "estimate")]
+w$estimate <- sprintf("%.3f", w$estimate)
+ww <- reshape(w, idvar = "sigma", timevar = "method", direction = "wide")
+names(ww) <- sub("^estimate\\.", "", names(ww))
+knitr::kable(ww[, c("sigma", "t", "bca", "percentile", "normal", "basic")],
+             row.names = FALSE,
+             caption = "Table 2. Mean interval width at n = 20.")
+```
+
+## Study 2
+
+```{r fig-cv, fig.cap = "Figure 2. Bias of the naive and nested CV estimates of the final model's RMSE. Bars are ±1.96 MCSE."}
+knitr::include_graphics(file.path(fig_dir, "cv-bias.png"))
+```
+
+```{r tab-cv}
+b <- cvp[cvp$measure == "bias", ]
+b$key <- paste(b$method, b$aggregation, sep = ", ")
+b$value <- sprintf("%+.3f (%.3f)", b$estimate, b$mcse)
+bw <- reshape(b[, c("beta", "n", "p", "key", "value")],
+              idvar = c("beta", "n", "p"), timevar = "key",
+              direction = "wide")
+names(bw) <- sub("^value\\.", "", names(bw))
+bw <- merge(bw, sel, by = c("n", "p", "beta"))
+bw$selected_true_predictor <- ifelse(bw$beta == 0, "—",
+                                     pct(bw$selected_true_predictor, 0))
+bw <- bw[order(bw$beta, bw$p, bw$n),
+         c("beta", "n", "p", "naive, fold", "naive, pooled", "nested, fold",
+           "nested, pooled", "selected_true_predictor")]
+names(bw)[8] <- "P(select x1)"
+knitr::kable(bw, row.names = FALSE,
+             caption = "Table 3. Bias (MCSE) of CV estimates of the final model's RMSE, and how often the true predictor was selected.")
+```
+
+**Selection bias.** The naive estimate was optimistic in every scenario
+where the choice among candidates was not obvious, under both aggregations.
+Its bias grew with the number of candidates and shrank with $n$. Under the
+null, pooled naive bias went from
+`r fmt(get_cv(200, 5, 0, "naive"))` at $n = 200, p = 5$ to
+`r fmt(get_cv(50, 25, 0, "naive"))` at $n = 50, p = 25$. When a real signal
+was present and $n = 200$, the true predictor was always selected and the
+optimism essentially vanished (`r fmt(get_cv(200, 25, 0.5, "naive"))`).
+
+**Aggregation bias.** The fold-averaged nested estimate was also optimistic,
+for example `r fmt(get_cv(50, 5, 0, "nested", "fold"))` at $n = 50, p = 5$.
+Pooling removed this bias
+(`r fmt(get_cv(50, 5, 0, "nested", "pooled"))`). This is consistent with it being an
+artefact of averaging per-fold RMSEs and not a failure of nested CV. With
+pooling, nested CV had `r sum(abs(nested_pooled_bias$estimate) < 2 * nested_pooled_bias$mcse)`
+of `r nrow(nested_pooled_bias)` biases within 2 MCSE of zero. The
+exceptions were small and *positive*, at most
+`r sprintf("%+.3f", max(nested_pooled_bias$estimate))`. That is the
+expected pessimism from training on 80% of the data, and it is largest
+when $n = 50$ and there are many candidates to choose from.
+
+# Discussion
+
+In Study 1 the bootstrap offered no advantage over the $t$ interval for the
+mean at small $n$ and moderate skew. For strongly skewed data, BCa was the
+best bootstrap interval and overtook $t$ as $n$ grew. No method was
+satisfactory at $n = 10$ with heavy skew. This agrees with the theoretical
+second-order accuracy of BCa, and with its known small-sample
+narrowness [@efron1987; @davison1997]. The practical lesson is to present
+small-sample intervals for skewed data with appropriate caution, not to
+choose the bootstrap by default.
+
+Study 2 puts numbers on a well-known pitfall. Selecting among only 25
+single-variable models is enough to make naive CV understate prediction
+error by several percent when $n = 50$. Nested CV is the remedy
+[@varma2006; @cawley2010], but the study also exposed a second, less
+familiar source of optimism. Averaging per-fold RMSEs is biased
+downwards when test folds are small, and at $n = 50$ this bias was about as
+large as the selection bias that nested CV is meant to remove. Computing
+non-linear metrics such as the RMSE from the pooled out-of-fold predictions
+[@forman2010] avoids the problem. The `RDataScienceCompendium` functions
+`cross_validate()` and `nested_cv()` now report both versions. Once pooled,
+nested CV's remaining bias is small and conservative.
+
+**Limitations.** Study 1 considers only log-normal data and the mean;
+heavier tails or other statistics may favour different methods. Study 2
+uses a simple class of candidate models and a single choice of fold counts.
+Both designs are easy to extend with the scripts provided.
+
+# Reproducibility {-}
+
+From the repository root:
+
+```sh
+make analysis   # install package, run both studies, draw figures, render paper
+```
+
+The studies used a machine with
+`r sub(" \\(.*", "", prov(prov_cov, "backend"))` backend and took
+`r prov(prov_cov, "elapsed_seconds")` s (Study 1) and
+`r prov(prov_cv, "elapsed_seconds")` s (Study 2) of wall-clock time on
+`r prov(prov_cov, "platform")` running `r prov(prov_cov, "r_version")`.
+Because every replicate has its own random-number stream, the numbers in
+this paper are reproduced exactly with any number of workers
+(`RDSC_WORKERS=1` for a sequential run).
+
+# References {-}

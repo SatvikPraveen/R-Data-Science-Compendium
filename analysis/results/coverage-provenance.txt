@@ -1,0 +1,11 @@
+study: coverage
+date: 2026-09-27 02:43:09 EDT
+seed: 20250101
+n_sim: 5000
+rng: L'Ecuyer-CMRG
+backend: future (8 workers)
+elapsed_seconds: 123.6
+failed_replicates: 0
+package_version: 0.2.0
+r_version: R version 4.5.2 (2025-10-31)
+platform: aarch64-apple-darwin25.2.0
