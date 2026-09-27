@@ -8,9 +8,24 @@ data science topics. They are **not** part of the installable package in
 source("modules/04-statistical-analysis/hypothesis-testing.R")
 ```
 
-Each script loads its own dependencies, so you may need to install extra
-packages first. The tested, documented, research-grade implementations of the
-core methods live in the package itself (see the top-level README).
+Each script attaches the packages it needs with `library()`; nothing is
+installed as a side effect of sourcing. To install everything the modules,
+case studies and Shiny apps use, and then check that they all run:
+
+```sh
+Rscript modules/install-dependencies.R   # discovers ~150 packages from the code
+Rscript modules/check-modules.R          # scripts | reports | apps (default: all)
+```
+
+`check-modules.R` sources each script in a fresh R session and calls its
+`run_*_demo()` functions, renders each case study, and starts each Shiny app's
+server with `shiny::testServer()`. It runs in CI on every change and weekly.
+
+The case studies use **simulated data** with a fixed seed and a fixed
+analysis date, and every number they report is computed in the document.
+
+The tested, documented implementations of the core statistical methods live
+in the package itself (see the top-level README).
 
 | Directory                 | Topics                                                   |
 | ------------------------- | -------------------------------------------------------- |

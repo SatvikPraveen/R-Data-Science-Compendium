@@ -5,6 +5,8 @@
 [![test-coverage](https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/test-coverage.yaml)
 [![lint](https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/lint.yaml/badge.svg)](https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/lint.yaml)
 [![pkgdown](https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/pkgdown.yaml/badge.svg)](https://satvikpraveen.github.io/R-Data-Science-Compendium/)
+[![analysis](https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/analysis.yaml/badge.svg)](https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/analysis.yaml)
+[![modules](https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/modules.yaml/badge.svg)](https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/modules.yaml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.md)
 <!-- badges: end -->
 
@@ -141,8 +143,8 @@ pooled out-of-fold predictions. There were 8 scenarios × 1,000 replicates.
 ![Bias of CV estimates](analysis/figures/cv-bias.png)
 
 The full write-up, with tables and figures, is
-[`analysis/paper/paper.Rmd`](analysis/paper/paper.Rmd). The rendered,
-self-contained version is `analysis/paper/paper.html`. Summarised results
+[`analysis/paper/paper.Rmd`](analysis/paper/paper.Rmd); read the rendered
+paper on the [website](https://satvikpraveen.github.io/R-Data-Science-Compendium/paper.html). Summarised results
 and provenance (seed, replicates, R version, platform, run time) are in
 [`analysis/results/`](analysis/results).
 
@@ -171,9 +173,15 @@ results.
 
 See [`PROJECT_STRUCTURE.md`](PROJECT_STRUCTURE.md). In short: `R/`, `man/`,
 `tests/` and `vignettes/` form the package; `analysis/` is the compendium;
-`modules/` and `shiny-apps/` hold the earlier stand-alone tutorial scripts,
-case studies and Shiny demos. Those are kept for learning purposes but are
-not part of the tested package.
+`modules/` and `shiny-apps/` hold stand-alone tutorial scripts, four R
+Markdown case studies on simulated data, and three Shiny apps. They are not
+part of the package, but a separate CI workflow runs every module's demo,
+renders every case study and starts every app:
+
+```sh
+Rscript modules/install-dependencies.R   # about 150 packages, found by scanning the code
+Rscript modules/check-modules.R          # 26 scripts, 4 case studies, 3 apps
+```
 
 ## Development
 

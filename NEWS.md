@@ -34,4 +34,10 @@ First release as an installable, tested R package and research compendium.
 * R CMD check on Linux, macOS and Windows (R 4.1 to devel), coverage,
   lintr and pkgdown workflows.
 * Reproducible Docker image and a real `renv.lock`.
-* The previous tutorial scripts moved from `R/` to `modules/`.
+* The previous tutorial scripts moved from `R/` to `modules/`. All 26 scripts,
+  4 case studies and 3 Shiny apps now run (previously 6 scripts did, and no
+  case study rendered) and are exercised in CI by `modules/check-modules.R`.
+* The case studies no longer contain hard-coded "results": every reported
+  number is computed from the (simulated) data, and several methodological
+  errors were fixed, e.g. model selection on the test set, `cor()^2` used
+  as out-of-sample R², and misaligned cluster labels.

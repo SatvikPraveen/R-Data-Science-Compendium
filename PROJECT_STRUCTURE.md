@@ -31,6 +31,8 @@ an installable R package holds the reusable, tested methods, and a separate
 │   └── paper/                  paper.Rmd and references.bib
 │
 ├── modules/                    Stand-alone tutorial scripts and case studies (not part of the package)
+│   ├── install-dependencies.R  Installs the packages the modules use (discovered from the code)
+│   └── check-modules.R         Runs every demo, renders every case study, starts every app
 ├── shiny-apps/                 Stand-alone Shiny demonstrations (not part of the package)
 │
 ├── Makefile                    Build, check and analysis pipeline (`make help`)
