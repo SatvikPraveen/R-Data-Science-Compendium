@@ -1,782 +1,238 @@
-# R Data Science Compendium 📊
+# RDataScienceCompendium
 
-![R](https://img.shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white)![RStudio](https://img.shields.io/badge/RStudio-4285F4?style=for-the-badge&logo=rstudio&logoColor=white)![Shiny](https://img.shields.io/badge/Shiny-blue?style=for-the-badge&logo=RStudio&logoColor=white)[![Coverage
-status](https://img.shields.io/badge/Coverage-95%25-brightgreen?style=for-the-badge&logo=codecov&logoColor=white)](https://codecov.io/github/SatvikPraveen/R-Data-Science-Compendium?branch=main)
-[![License:
-MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](https://opensource.org/licenses/MIT)
-[![Docker](https://img.shields.io/badge/Docker-Available-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://hub.docker.com/)
+**Reproducible resampling, simulation and model-evaluation methods for
+R, packaged as a research compendium.**
 
-> **A comprehensive showcase of advanced R programming expertise through
-> real-world data science applications**
+The repository contains two things:
 
-This portfolio demonstrates mastery of R programming, statistical
-analysis, and machine learning through practical implementations. Built
-following industry best practices and designed to showcase
-professional-grade data science capabilities.
+1.  **An R package** of rigorously tested implementations of methods
+    that underpin credible applied statistics. These are bootstrap
+    confidence intervals, permutation tests, effect sizes with exact
+    intervals, a framework for simulation studies that reports Monte
+    Carlo error, and honest model evaluation with nested
+    cross-validation and calibration metrics. It depends on base R only.
+2.  **A research compendium** (`analysis/`) that uses the package to run
+    two pre-specified simulation studies, and a paper generated from
+    their results. `make analysis` regenerates every number, table and
+    figure from scratch.
 
-## 🎯 Portfolio Highlights
+Documentation website:
+<https://satvikpraveen.github.io/R-Data-Science-Compendium/>
 
-**What This Project Demonstrates:**
-
-✅ **Advanced R Programming** - Object-oriented programming, functional
-paradigms, performance optimization  
-✅ **Complete Data Science Workflows** - From raw data ingestion to
-production-ready insights  
-✅ **Professional Development Practices** - Testing (95%+ coverage),
-CI/CD, containerization  
-✅ **Interactive Applications** - Shiny dashboards with modern UI/UX  
-✅ **Statistical & ML Expertise** - Comprehensive modeling, validation,
-and interpretation  
-✅ **Production-Ready Code** - Scalable, maintainable, and
-well-documented solutions
-
-## 🚀 Quick Demo
-
-``` bash
-# Clone the repository
-git clone https://github.com/SatvikPraveen/R-Data-Science-Compendium.git
-cd R-Data-Science-Compendium
-
-# One-command setup (installs all dependencies)
-chmod +x setup.sh && ./setup.sh
-
-# Launch interactive dashboard
-Rscript -e "shiny::runApp('shiny-apps/data-dashboard', port=3838)"
-
-# Run comprehensive test suite
-./dev-helpers.sh test
-
-# View advanced visualizations
-Rscript -e "source('R/03-visualization/ggplot2-mastery.R')"
-```
-
-**🎯 For Recruiters**: Visit the live dashboard at `localhost:3838`
-after running the setup - it showcases interactive data analysis
-capabilities in under 2 minutes.
-
-## 💼 Professional Skills Demonstrated
-
-### **Core R Programming Excellence**
-
-| Skill | Implementation | Files |
-|----|----|----|
-| **Advanced Data Structures** | Custom S4 classes, nested lists, efficient data.tables | `R/01-basics/data-types.R` |
-| **Functional Programming** | Pure functions, closures, advanced purrr operations | `R/06-advanced-topics/functional-programming.R` |
-| **Object-Oriented Design** | S3/S4/R6 classes, method dispatch, inheritance | `R/06-advanced-topics/object-oriented-programming.R` |
-| **Performance Optimization** | Vectorization, parallel processing, memory management | `R/06-advanced-topics/parallel-computing.R` |
-| **Error Handling** | Robust exception management, input validation | `R/utils/validation-functions.R` |
-
-### **Data Science Workflow Mastery**
-
-| Domain | Techniques | Business Impact |
-|----|----|----|
-| **Data Engineering** | ETL pipelines, data validation, schema management | Automated data quality checks |
-| **Statistical Analysis** | Bayesian inference, time series, survival analysis | Evidence-based decision making |
-| **Machine Learning** | Ensemble methods, hyperparameter tuning, MLOps | Predictive model deployment |
-| **Visualization** | Interactive dashboards, publication graphics, storytelling | Executive-ready presentations |
-| **Reporting** | Automated R Markdown, parameterized reports | Scalable business intelligence |
-
-### **Software Engineering Best Practices**
-
-- **Testing**: 95%+ code coverage with testthat, edge case handling
-- **Documentation**: Comprehensive roxygen2 docs, tutorials, code
-  examples
-- **Version Control**: Professional Git workflows, semantic versioning
-- **CI/CD**: GitHub Actions for testing, deployment, quality gates
-- **Containerization**: Docker for reproducible, scalable deployments
-- **Package Development**: CRAN-ready package structure and standards
-
-## 🏗 Architecture & Design
-
-    R-Data-Science-Compendium/
-    ├── 📂 R/                          # Core implementations (modular design)
-    │   ├── 01-basics/                 # Foundation: data types, functions, control flow
-    │   ├── 02-data-manipulation/      # Advanced dplyr, tidyr, data.table operations
-    │   ├── 03-visualization/          # ggplot2 mastery, interactive plots, themes
-    │   ├── 04-statistical-analysis/   # Hypothesis testing, regression, time series
-    │   ├── 05-machine-learning/       # ML pipelines, model evaluation, deployment
-    │   ├── 06-advanced-topics/        # OOP, functional programming, optimization
-    │   └── utils/                     # Reusable functions, helpers, validators
-    ├── 📂 analysis/                   # Real-world case studies & business applications
-    ├── 📂 shiny-apps/                 # Interactive dashboards & web applications
-    ├── 📂 tests/                      # Comprehensive test suite (95%+ coverage)
-    ├── 📂 docker/                     # Containerization for deployment
-    ├── 📂 docs/                       # Professional documentation & guides
-    └── 📂 .github/workflows/          # CI/CD pipelines & automation
-
-**Design Principles:**
-
-- **Modularity**: Each component is self-contained and reusable
-- **Scalability**: Efficient algorithms that handle large datasets
-- **Maintainability**: Clean code with comprehensive documentation
-- **Testability**: Every function has corresponding unit tests
-- **Reproducibility**: Version-controlled dependencies with renv
-
-## 🌟 Featured Projects
-
-### 📊 **Interactive Business Intelligence Dashboard**
-
-**Location**: `shiny-apps/data-dashboard/`
-
-A production-ready analytics dashboard showcasing:
-
-- Real-time data visualization with drill-down capabilities
-- Responsive design with custom CSS/JavaScript
-- Advanced filtering, search, and export functionality
-- Integration with multiple data sources
-- Performance monitoring and error handling
-
-**Key Features:**
-
-- 📈 Dynamic KPI tracking with alert systems
-- 🎯 Customer segmentation with interactive clustering
-- 📉 Time series forecasting with confidence intervals
-- 🗺️ Geographic analysis with leaflet integration
-- 📊 Executive summary reports with automated insights
-
-**Technologies**: Shiny, DT, plotly, leaflet, shinydashboard, crosstalk
-
-------------------------------------------------------------------------
-
-### 🤖 **Production ML Pipeline**
-
-**Location**: `R/05-machine-learning/ml-pipeline.R`
-
-Enterprise-grade machine learning workflow featuring:
-
-- Automated feature engineering and selection
-- Cross-validation with stratified sampling
-- Hyperparameter tuning using grid and random search
-- Model ensemble methods and stacking
-- Production deployment with monitoring
-
-**Business Applications:**
-
-- Customer churn prediction (92% accuracy)
-- Sales forecasting with uncertainty quantification
-- Risk assessment with interpretable models
-- A/B testing framework with statistical validation
-
-**Technologies**: caret, randomForest, xgboost, mlr3, DALEX
-
-------------------------------------------------------------------------
-
-### 📈 **Advanced Statistical Analysis Suite**
-
-**Location**: `R/04-statistical-analysis/`
-
-Comprehensive statistical modeling framework:
-
-- Bayesian analysis with MCMC sampling
-- Survival analysis for customer lifetime value
-- Time series analysis with multiple forecasting models
-- Mixed-effects models for hierarchical data
-- Causal inference using instrumental variables
-
-**Real-world Applications:**
-
-- Clinical trial analysis with adaptive designs
-- Economic forecasting with uncertainty bands
-- Quality control using statistical process control
-- Marketing attribution modeling
-
-**Technologies**: rstanarm, survival, forecast, lme4, broom
-
-------------------------------------------------------------------------
-
-### 🎨 **Publication-Quality Visualization Gallery**
-
-**Location**: `R/03-visualization/ggplot2-mastery.R`
-
-Professional visualization toolkit featuring:
-
-- Custom ggplot2 themes matching corporate branding
-- Interactive plotly visualizations with animations
-- Geographic visualizations with custom projections
-- Publication-ready figures with precise typography
-- Automated report generation with consistent styling
-
-**Visualization Types:**
-
-- Executive dashboards with KPI tracking
-- Scientific publications with statistical annotations
-- Marketing presentations with compelling narratives
-- Financial reports with regulatory compliance
-
-**Technologies**: ggplot2, plotly, gganimate, patchwork, leaflet
-
-## 🛠 Technology Stack
-
-### **Core R Ecosystem**
+## Installation
 
 ``` r
 
-# Data Manipulation & Analysis
-library(tidyverse)      # Modern data science toolkit
-library(data.table)     # High-performance operations (5M+ rows/sec)
-library(dtplyr)         # dplyr backend for data.table speed
-
-# Advanced Visualization
-library(ggplot2)        # Grammar of graphics foundation
-library(plotly)         # Interactive web visualizations
-library(gganimate)      # Animated graphics for presentations
-library(patchwork)      # Publication-quality plot composition
-
-# Statistical Modeling
-library(broom)          # Tidy statistical outputs
-library(modelr)         # Modeling helper functions
-library(caret)          # Unified ML interface (200+ algorithms)
-library(mlr3)           # Next-generation ML framework
-
-# Time Series & Forecasting
-library(forecast)       # Comprehensive forecasting toolkit
-library(prophet)        # Facebook's forecasting algorithm
-library(tsibble)        # Tidy time series analysis
-
-# Bayesian & Advanced Statistics
-library(rstanarm)       # Bayesian applied regression
-library(brms)           # Bayesian multilevel models
-library(survival)       # Survival analysis suite
-
-# Interactive Applications
-library(shiny)          # Web application framework
-library(shinydashboard) # Dashboard template system
-library(DT)             # Interactive data tables
-library(crosstalk)      # Widget interactivity without Shiny
+# install.packages("remotes")
+remotes::install_github("SatvikPraveen/R-Data-Science-Compendium", build_vignettes = TRUE)
 ```
 
-### **Development & Deployment**
+Requires R ≥ 4.1. The package imports only base packages (`stats`,
+`utils`, `parallel`).
 
-``` yaml
-# Development Environment
-IDE: VS Code with R Language Server
-Linting: lintr with custom rules
-Formatting: styler for consistent code style
-Debugging: Advanced breakpoint debugging
-
-# Quality Assurance
-Testing: testthat with 95%+ coverage
-Documentation: roxygen2 with comprehensive examples
-Performance: profvis for optimization
-Security: Static analysis for vulnerability detection
-
-# Deployment & Operations
-Containerization: Docker with multi-stage builds
-Orchestration: docker-compose for development
-CI/CD: GitHub Actions with matrix testing
-Monitoring: Application performance monitoring
-```
-
-## 📚 Learning Modules & Skill Progression
-
-### **Module 1: R Programming Foundations** 📖
-
-**Location**: `R/01-basics/`
-
-Master professional R development:
-
-- **Advanced Data Structures**: Efficient vector operations, list
-  manipulation, data frame optimization
-- **Functional Programming**: Higher-order functions, closures,
-  environment management
-- **Control Structures**: Vectorized operations, conditional execution,
-  iteration patterns
-- **Error Handling**: Graceful failure management, input validation,
-  debugging strategies
-
-**Business Value**: Write maintainable, efficient code that scales with
-data volume
-
-------------------------------------------------------------------------
-
-### **Module 2: Data Engineering Excellence** 🔧
-
-**Location**: `R/02-data-manipulation/`
-
-Production-grade data processing:
-
-- **Data Import/Export**: Database connections, API integration, file
-  format handling
-- **Data Cleaning**: Outlier detection, missing value imputation, data
-  validation
-- **Performance Optimization**: data.table for speed, chunked processing
-  for memory
-- **Data Quality**: Automated testing, schema validation, lineage
-  tracking
-
-**Business Value**: Reliable data pipelines that ensure decision-making
-accuracy
-
-------------------------------------------------------------------------
-
-### **Module 3: Visualization Excellence** 🎨
-
-**Location**: `R/03-visualization/`
-
-Executive-ready data storytelling:
-
-- **Custom ggplot2 Themes**: Brand-consistent visualizations, typography
-  control
-- **Interactive Dashboards**: User-driven exploration, real-time updates
-- **Statistical Graphics**: Confidence intervals, model diagnostics,
-  uncertainty visualization
-- **Publication Graphics**: High-DPI outputs, colorblind-friendly
-  palettes
-
-**Business Value**: Communicate insights effectively to technical and
-non-technical stakeholders
-
-------------------------------------------------------------------------
-
-### **Module 4: Statistical Analysis Mastery** 📊
-
-**Location**: `R/04-statistical-analysis/`
-
-Evidence-based decision making:
-
-- **Hypothesis Testing**: Power analysis, multiple comparison
-  corrections, effect size interpretation
-- **Regression Analysis**: Linear, logistic, mixed-effects, regularized
-  regression
-- **Time Series**: ARIMA, state-space models, forecasting with
-  uncertainty
-- **Bayesian Methods**: Prior specification, MCMC diagnostics, posterior
-  interpretation
-
-**Business Value**: Make statistically sound recommendations with
-quantified uncertainty
-
-------------------------------------------------------------------------
-
-### **Module 5: Machine Learning Engineering** 🤖
-
-**Location**: `R/05-machine-learning/`
-
-Production ML systems:
-
-- **Feature Engineering**: Automated feature selection, dimensionality
-  reduction, encoding
-- **Model Development**: Algorithm selection, hyperparameter tuning,
-  ensemble methods
-- **Validation Strategies**: Cross-validation, temporal validation, A/B
-  testing integration
-- **Model Deployment**: RESTful APIs, batch scoring, model monitoring
-
-**Business Value**: Deploy predictive models that drive automated
-decision-making
-
-------------------------------------------------------------------------
-
-### **Module 6: Advanced Programming** 🚀
-
-**Location**: `R/06-advanced-topics/`
-
-Cutting-edge R development:
-
-- **Object-Oriented Programming**: S4 classes for complex data
-  structures, R6 for mutable objects
-- **Parallel Computing**: Multi-core processing, cluster computing, GPU
-  acceleration
-- **Package Development**: CRAN submission process, continuous
-  integration, dependency management
-- **Performance Optimization**: Profiling, memory management, algorithm
-  complexity
-
-**Business Value**: Build scalable, maintainable systems that handle
-enterprise data volumes
-
-## 💡 Real-World Business Applications
-
-### **Financial Services** 💰
-
-- **Credit Risk Modeling**: Logistic regression with regulatory
-  compliance
-- **Algorithmic Trading**: Time series forecasting with risk management
-- **Fraud Detection**: Anomaly detection using isolation forests
-- **Portfolio Optimization**: Modern portfolio theory with constraints
-
-### **Healthcare & Life Sciences** 🏥
-
-- **Clinical Trial Analysis**: Survival analysis with adaptive designs
-- **Drug Discovery**: Predictive modeling for compound screening
-- **Epidemiological Studies**: Mixed-effects models for population
-  health
-- **Medical Imaging**: Deep learning integration with R/Python workflows
-
-### **Marketing & E-commerce** 📈
-
-- **Customer Segmentation**: Clustering with behavioral variables
-- **Attribution Modeling**: Multi-touch attribution using Markov chains
-- **A/B Testing**: Statistical significance with practical significance
-- **Recommendation Systems**: Collaborative filtering with matrix
-  factorization
-
-### **Operations & Supply Chain** 📦
-
-- **Demand Forecasting**: Prophet with custom seasonality components
-- **Inventory Optimization**: Stochastic inventory models
-- **Quality Control**: Statistical process control with automated alerts
-- **Logistics Optimization**: Network optimization using operations
-  research
-
-## 🚀 Quick Start Guide
-
-### **For Recruiters & Technical Interviewers** 👔
-
-**2-Minute Technical Demo:**
-
-``` bash
-git clone https://github.com/SatvikPraveen/R-Data-Science-Compendium.git
-cd R-Data-Science-Compendium
-./setup.sh && Rscript -e "shiny::runApp('shiny-apps/data-dashboard')"
-```
-
-**Code Review Checklist:**
-
-**Data Manipulation**: Review
-`R/02-data-manipulation/dplyr-operations.R` for advanced techniques
-
-**Visualization**: Check `R/03-visualization/ggplot2-mastery.R` for
-design skills
-
-**ML Pipeline**: Examine `R/05-machine-learning/ml-pipeline.R` for
-engineering practices
-
-**Testing**: Explore `tests/` directory for code quality standards
-
-**Documentation**: Review inline comments and roxygen2 documentation
-
-**Assessment Questions:**
-
-1.  How would you scale this pipeline for 10M+ records?
-2.  What additional validation would you add for production?
-3.  How would you integrate this with existing business systems?
-
-------------------------------------------------------------------------
-
-### **For Hiring Managers** 📋
-
-**Business Impact Demonstration:**
-
-1.  **ROI Calculator**: Run `analysis/business-case-study.Rmd` for
-    quantified business value
-2.  **Risk Assessment**: Review
-    `R/04-statistical-analysis/hypothesis-testing.R` for decision
-    frameworks
-3.  **Automation Examples**: See `shiny-apps/` for self-service
-    analytics tools
-4.  **Scalability**: Check `docker/` for enterprise deployment readiness
-
-**Key Metrics:**
-
-- **Code Quality**: 95%+ test coverage, comprehensive documentation
-- **Performance**: Handles datasets up to 50M records efficiently
-- **Maintainability**: Modular design with clear separation of concerns
-- **Business Readiness**: Production-ready with monitoring and error
-  handling
-
-------------------------------------------------------------------------
-
-### **For Data Science Teams** 🔬
-
-**Integration & Collaboration:**
-
-``` bash
-# Setup development environment
-git clone https://github.com/SatvikPraveen/R-Data-Science-Compendium.git
-cd R-Data-Science-Compendium
-
-# Install development dependencies
-Rscript setup.R
-
-# Run full test suite
-./dev-helpers.sh test
-
-# Check code style compliance
-./dev-helpers.sh lint
-
-# Build documentation
-./dev-helpers.sh docs
-```
-
-**Development Workflow:**
-
-1.  **Feature Development**: Use `dev-helpers.sh` for consistent
-    workflows
-2.  **Code Review**: All functions documented with examples
-3.  **Testing**: Add tests for new functionality
-4.  **Integration**: Docker containers for consistent environments
-
-## 📈 Performance & Quality Metrics
-
-### **Code Quality Standards**
-
-| Metric                 | Target                       | Current  | Status |
-|------------------------|------------------------------|----------|--------|
-| Test Coverage          | \>90%                        | 95.2%    | ✅     |
-| Documentation Coverage | 100%                         | 100%     | ✅     |
-| Code Style Compliance  | 100%                         | 100%     | ✅     |
-| Performance Benchmarks | \<1s for standard operations | 0.3s avg | ✅     |
-| Memory Efficiency      | \<1GB for 10M records        | 400MB    | ✅     |
-
-### **Technical Specifications**
-
-- **Codebase**: 8,000+ lines of production-ready R code
-- **Functions**: 150+ documented functions with examples
-- **Test Suite**: 200+ unit tests covering edge cases
-- **Dependencies**: Managed with renv for reproducibility
-- **Performance**: Benchmarked and optimized for enterprise scale
-
-### **Compatibility Matrix**
-
-| Environment       | R Version | Status | Notes                 |
-|-------------------|-----------|--------|-----------------------|
-| Local Development | R 4.3+    | ✅     | Recommended setup     |
-| Docker Container  | R 4.3.2   | ✅     | Production deployment |
-| GitHub Actions    | R 4.1-4.3 | ✅     | Matrix testing        |
-| Shiny Server      | R 4.2+    | ✅     | Application hosting   |
-
-## 🔧 Development Environment Setup
-
-### **Prerequisites**
-
-``` bash
-# macOS (recommended)
-brew install r
-brew install git
-brew install pandoc
-brew install imagemagick
-
-# Ubuntu/Debian
-sudo apt-get update
-sudo apt-get install r-base-dev git pandoc imagemagick
-
-# Windows (using Chocolatey)
-choco install r.project git pandoc imagemagick
-```
-
-### **Automated Setup**
-
-``` bash
-# Complete project setup (one command)
-git clone https://github.com/SatvikPraveen/R-Data-Science-Compendium.git
-cd R-Data-Science-Compendium
-chmod +x setup.sh && ./setup.sh
-
-# Manual setup (if automated fails)
-Rscript setup.R
-```
-
-### **Development Tools Integration**
-
-**VS Code Configuration** (`.vscode/settings.json`):
-
-``` json
-{
-  "r.rpath.windows": "C:/Program Files/R/R-4.3.2/bin/R.exe",
-  "r.lsp.enabled": true,
-  "r.bracketedPaste": true,
-  "r.plot.useHttpgd": true,
-  "r.session.levelOfObjectDetail": "Detailed"
-}
-```
-
-**Daily Development Commands:**
-
-``` bash
-# Quality assurance
-./dev-helpers.sh test     # Run comprehensive test suite
-./dev-helpers.sh lint     # Check code style and quality
-./dev-helpers.sh coverage # Generate coverage report
-
-# Documentation
-./dev-helpers.sh docs     # Build all documentation
-./dev-helpers.sh readme   # Update README with latest stats
-
-# Development
-./dev-helpers.sh format   # Auto-format all R code
-./dev-helpers.sh check    # R CMD check equivalent
-./dev-helpers.sh install  # Install package dependencies
-```
-
-## 🐳 Docker Deployment
-
-### **Local Development**
-
-``` bash
-# Build and run development environment
-docker-compose up -d
-
-# Access RStudio Server
-open http://localhost:8787
-
-# Access Shiny Dashboard
-open http://localhost:3838
-```
-
-### **Production Deployment**
-
-``` dockerfile
-# Multi-stage build for optimization
-FROM rocker/r-ver:4.3.2 as builder
-COPY renv.lock renv.lock
-RUN R -e "install.packages('renv'); renv::restore()"
-
-FROM rocker/shiny:4.3.2
-COPY --from=builder /usr/local/lib/R/site-library /usr/local/lib/R/site-library
-COPY . /srv/shiny-server/
-EXPOSE 3838
-CMD ["/usr/bin/shiny-server"]
-```
-
-## 📊 Testing Framework
-
-### **Test Coverage Report**
+## Example
 
 ``` r
 
-# Generate comprehensive coverage report
-covr::report()
+library(RDataScienceCompendium)
 
-# Current coverage by module:
-# ├── Basics: 97.3%
-# ├── Data Manipulation: 95.8%
-# ├── Visualization: 94.1%
-# ├── Statistical Analysis: 96.7%
-# ├── Machine Learning: 93.9%
-# └── Advanced Topics: 91.2%
+# BCa bootstrap interval for a ratio of means
+ratio <- function(d) mean(d$mpg[d$am == 0]) / mean(d$mpg[d$am == 1])
+boot_ci(mtcars, ratio, R = 1999, type = "bca", seed = 1)
+
+# Permutation test (exact when feasible, otherwise Phipson-Smyth p-value)
+perm_test(mtcars$mpg[mtcars$am == 1], mtcars$mpg[mtcars$am == 0], seed = 1)
+
+# Effect size with an exact noncentral-t interval
+hedges_g(mtcars$mpg[mtcars$am == 1], mtcars$mpg[mtcars$am == 0])
+
+# A simulation study with Monte Carlo standard errors
+res <- run_simulation(
+  generate = function(n) rexp(n),
+  analyse  = function(x) {
+    ci <- t.test(x)$conf.int
+    c(estimate = mean(x), lower = ci[1], upper = ci[2])
+  },
+  n_sim = 2000, scenarios = data.frame(n = c(10, 40)), seed = 42
+)
+sim_performance(res, true = 1)
+
+# Nested cross-validation versus the optimistic "naive" estimate
+candidates <- list(
+  wt    = function(d) lm(mpg ~ wt, data = d),
+  wt_hp = function(d) lm(mpg ~ wt + hp, data = d),
+  all   = function(d) lm(mpg ~ ., data = d)
+)
+nested_cv(mtcars, candidates, outcome = "mpg", seed = 1)
 ```
 
-### **Test Categories**
+## What is in the package
 
-- **Unit Tests**: Individual function validation
-- **Integration Tests**: Module interaction testing
-- **Performance Tests**: Benchmarking critical functions
-- **Edge Case Tests**: Boundary condition handling
-- **Mock Tests**: External dependency simulation
+| Area | Functions | Validated against |
+|----|----|----|
+| Bootstrap | [`boot_ci()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/boot_ci.md) (percentile, basic, normal, BCa), [`jackknife_influence()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/jackknife_influence.md) | Replicates and all four intervals **identical** to [`boot::boot.ci()`](https://rdrr.io/pkg/boot/man/boot.ci.html); empirical coverage |
+| Permutation tests | [`perm_test()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/perm_test.md) (two-sample, one-sample, paired; exact or Monte Carlo) | Hand-enumerated exact p-values; type I error control; exact vs Monte Carlo agreement |
+| Effect sizes | [`cohens_d()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/effect_sizes.md), [`hedges_g()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/effect_sizes.md), [`hedges_correction()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/effect_sizes.md) | Agreement with [`t.test()`](https://rdrr.io/r/stats/t.test.html); exact inversion of the noncentral-t CDF; unbiasedness of *g*; nominal coverage |
+| Simulation studies | [`run_simulation()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/run_simulation.md), [`sim_performance()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/sim_performance.md), [`sim_n_required()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/sim_n_required.md), [`rng_streams()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/rng_streams.md) | Hand-computed Morris et al. (2019) formulas; bit-identical sequential and parallel results |
+| Resampling designs | [`make_folds()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/make_folds.md) (random, stratified, grouped) | Balance and group-integrity properties |
+| Model evaluation | [`cross_validate()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/cross_validate.md), [`nested_cv()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/nested_cv.md) | LOOCV against the closed-form PRESS identity; removal of selection bias |
+| Metrics | [`auc()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/auc.md), [`auc_ci()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/auc.md) (DeLong), [`brier_score()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/scoring_rules.md), [`log_loss()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/scoring_rules.md), [`calibration()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/calibration.md), [`rmse()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/regression_metrics.md), [`mae()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/regression_metrics.md), [`r_squared()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/regression_metrics.md) | DeLong SE against a brute-force implementation; AUC against the Mann–Whitney statistic |
+| Known-truth data | [`simulate_linear()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/simulate_data.md), [`simulate_logistic()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/simulate_data.md), [`ar1_cor()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/simulate_data.md) | Recovery of generating parameters |
 
-### **Continuous Integration**
+Design principles:
 
-``` yaml
-# .github/workflows/R-CMD-check.yaml
-name: R-CMD-check
-on: [push, pull_request]
-jobs:
-  R-CMD-check:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-        r-version: ["4.1", "4.2", "4.3"]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: r-lib/actions/setup-r@v2
-      - name: Install dependencies
-        run: Rscript setup.R
-      - name: Check package
-        run: R CMD check .
+- **Reproducible randomness.** Every stochastic function takes a `seed`
+  and restores the caller’s RNG state. Simulation replicates get
+  independent L’Ecuyer-CMRG streams, so results do not depend on the
+  number of parallel workers.
+- **Honest uncertainty.** Monte Carlo p-values are never zero, and
+  simulation summaries always come with Monte Carlo standard errors.
+  Documented caveats are stated where estimators are known to be biased,
+  such as the naive CV standard error.
+- **Validated, not just tested.** Each method is checked against an
+  independent reference: a reference implementation, a closed-form
+  identity, or a simulation property such as coverage, unbiasedness or
+  type I error.
+- **Minimal dependencies.** Only base R at run time; `boot` and `future`
+  are optional and used for tests and parallelism.
+
+Test coverage is about 97%; the per-file breakdown is in the summary of
+each [test-coverage
+run](https://github.com/SatvikPraveen/R-Data-Science-Compendium/actions/workflows/test-coverage.yaml).
+
+## The research compendium
+
+`analysis/` holds two simulation studies designed and reported with the
+ADEMP framework of Morris, White and Crowther (2019):
+
+**Study 1: Do bootstrap intervals rescue small, skewed samples?** Five
+nominal 95% intervals for a log-normal mean were compared: $`t`$,
+percentile, basic, normal and BCa, with 12 scenarios × 5,000 replicates
+and a coverage MCSE of at most 0.6 points.
+
+- For mild and moderate skew, the plain $`t`$ interval out-covered every
+  bootstrap interval at every $`n`$. At $`n = 10`$ and
+  $`\sigma = 0.25`$, $`t`$ covered 94.1% while all bootstrap intervals
+  covered under 90%.
+- With strong skew, every method under-covered (77–84% at $`n = 10`$).
+  BCa was the best bootstrap method and matched or beat $`t`$ from
+  $`n = 20`$.
+- The basic interval was the worst whenever the skew was not mild.
+
+![Coverage by method and sample size](analysis/figures/coverage.png)
+
+Coverage by method and sample size
+
+**Study 2: How optimistic is cross-validation after model selection?**
+The true test-set RMSE of a “select by CV, then refit” procedure was
+compared with the naive CV estimate (the best candidate’s CV score) and
+with nested CV. Each estimate was computed both by averaging per-fold
+RMSEs and from the pooled out-of-fold predictions. There were 8
+scenarios × 1,000 replicates.
+
+- Naive CV understated the RMSE by up to 0.107, with small $`n`$ and
+  many candidates.
+- A second, less familiar bias turned up: **averaging per-fold RMSEs**
+  made even nested CV optimistic, by up to 0.017 (Jensen’s inequality).
+  This finding led to
+  [`cross_validate()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/cross_validate.md)
+  and
+  [`nested_cv()`](https://satvikpraveen.github.io/R-Data-Science-Compendium/reference/nested_cv.md)
+  also reporting pooled estimates.
+- With pooling, nested CV was unbiased within 2 MCSE in 6 of 8
+  scenarios. In the other two it was slightly conservative (+0.021 at
+  most), as expected from training on 80% of the data.
+
+![Bias of CV estimates](analysis/figures/cv-bias.png)
+
+Bias of CV estimates
+
+The full write-up, with tables and figures, is
+[`analysis/paper/paper.Rmd`](https://satvikpraveen.github.io/R-Data-Science-Compendium/analysis/paper/paper.Rmd).
+The rendered, self-contained version is `analysis/paper/paper.html`.
+Summarised results and provenance (seed, replicates, R version,
+platform, run time) are in
+[`analysis/results/`](https://satvikpraveen.github.io/R-Data-Science-Compendium/analysis/results).
+
+### Reproducing the results
+
+``` sh
+git clone https://github.com/SatvikPraveen/R-Data-Science-Compendium.git
+cd R-Data-Science-Compendium
+Rscript setup.R      # install dependencies
+make analysis        # install the package, run both studies, render the paper
 ```
 
-## 🤝 Contributing & Collaboration
+Both studies together take about 10 minutes on 8 cores. Set
+`RDSC_WORKERS=1` for a sequential run; the results are identical either
+way. For a pinned environment, use the Docker image:
 
-This portfolio demonstrates professional development practices. While
-primarily for showcasing skills, it follows industry standards for
-collaborative development.
+``` sh
+docker compose build
+docker compose run --rm analysis
+```
 
-### **Code Contribution Workflow**
+`renv.lock` records the exact package versions used to produce the
+committed results.
 
-1.  **Fork & Branch**: Create feature branches with descriptive names
-2.  **Develop**: Follow existing code style and patterns
-3.  **Test**: Ensure 95%+ coverage with meaningful tests
-4.  **Document**: Add roxygen2 documentation with examples
-5.  **Review**: Submit PR with clear description and context
+## Repository layout
 
-### **Code Review Checklist**
+See
+[`PROJECT_STRUCTURE.md`](https://satvikpraveen.github.io/R-Data-Science-Compendium/PROJECT_STRUCTURE.md).
+In short: `R/`, `man/`, `tests/` and `vignettes/` form the package;
+`analysis/` is the compendium; `modules/` and `shiny-apps/` hold the
+earlier stand-alone tutorial scripts, case studies and Shiny demos.
+Those are kept for learning purposes but are not part of the tested
+package.
 
-All functions documented with examples
+## Development
 
-Test coverage maintained above 95%
+``` sh
+make test      # testthat suite
+make lint      # lintr (must be clean)
+make check     # R CMD check --as-cran
+make site      # pkgdown website
+```
 
-Code style compliant with lintr rules
+CI runs R CMD check on Linux, macOS and Windows for R 4.1, oldrel,
+release and devel. See
+[`CONTRIBUTING.md`](https://satvikpraveen.github.io/R-Data-Science-Compendium/CONTRIBUTING.md)
+for the validation standards expected of new methods.
 
-Performance benchmarks updated if applicable
+## Citation
 
-Breaking changes documented with migration guide
+``` r
 
-### **Issue Templates**
+citation("RDataScienceCompendium")
+```
 
-- **Bug Report**: Reproducible example with session info
-- **Feature Request**: Business justification with technical approach
-- **Performance Issue**: Benchmarking data and profiling results
-- **Documentation**: Specific improvements with examples
+or use the “Cite this repository” button on GitHub, which reads
+[`CITATION.cff`](https://satvikpraveen.github.io/R-Data-Science-Compendium/CITATION.cff).
 
-## 📄 License & Legal
+## Key references
 
-This project is licensed under the MIT License - see the
-[LICENSE](https://satvikpraveen.github.io/R-Data-Science-Compendium/LICENSE)
-file for complete terms.
+- Davison, A. C. and Hinkley, D. V. (1997). *Bootstrap Methods and Their
+  Application*. Cambridge University Press.
+- DeLong, E. R., DeLong, D. M. and Clarke-Pearson, D. L. (1988).
+  Comparing the areas under two or more correlated ROC curves.
+  *Biometrics*, 44(3), 837–845.
+- Efron, B. (1987). Better bootstrap confidence intervals. *JASA*,
+  82(397), 171–185.
+- Marwick, B., Boettiger, C. and Mullen, L. (2018). Packaging data
+  analytical work reproducibly using R (and friends). *The American
+  Statistician*, 72(1), 80–88.
+- Morris, T. P., White, I. R. and Crowther, M. J. (2019). Using
+  simulation studies to evaluate statistical methods. *Statistics in
+  Medicine*, 38(11), 2074–2102.
+- Phipson, B. and Smyth, G. K. (2010). Permutation p-values should never
+  be zero. *SAGMB*, 9(1), Article 39.
+- Varma, S. and Simon, R. (2006). Bias in error estimation when using
+  cross-validation for model selection. *BMC Bioinformatics*, 7, 91.
 
-### **Third-Party Dependencies**
+## License
 
-All dependencies are properly attributed and licensed for commercial
-use. See `DESCRIPTION` file for complete dependency list with versions.
-
-### **Data Privacy & Security**
-
-- No real personal data is included in this repository
-- All sample datasets are synthetic or publicly available
-- Security best practices implemented for data handling
-
-## 🎯 Contact & Professional Profile
-
-**Project Author**: Satvik Praveen  
-**GitHub**: [SatvikPraveen](https://github.com/SatvikPraveen)  
-**Email**: [Contact via GitHub](https://github.com/SatvikPraveen)
-
-### **Professional Skills Highlighted**
-
-- ✅ Advanced R Programming & Statistical Analysis
-- ✅ Machine Learning & Predictive Modeling
-- ✅ Interactive Dashboard Development
-- ✅ Software Engineering Best Practices
-- ✅ Production-Ready Code & Deployment
-- ✅ Business Intelligence & Analytics
-
-------------------------------------------------------------------------
-
-**Built with ❤️ using R and modern data science practices**
-
-*This portfolio showcases advanced R programming capabilities through
-practical applications, comprehensive testing, and professional
-development standards. Designed to demonstrate technical expertise for
-data science, analytics, and statistical programming roles.*
-
-**⭐ Star this repository if you find it valuable!**
-
-------------------------------------------------------------------------
-
-## 📚 Additional Resources
-
-### **Learning References**
-
-- [Advanced R Programming](http://adv-r.had.co.nz/) - Hadley Wickham
-- [R for Data Science](https://r4ds.had.co.nz/) - Wickham & Grolemund
-- [Hands-On Machine Learning with
-  R](https://bradleyboehmke.github.io/HOML/) - Boehmke & Greenwell
-- [R Packages](https://r-pkgs.org/) - Wickham & Bryan
-
-### **Professional Development**
-
-- [tidyverse Style Guide](https://style.tidyverse.org/)
-- [R Package Documentation](https://roxygen2.r-lib.org/)
-- [Testing R Code](https://testthat.r-lib.org/)
-- [R and Docker](https://rocker-project.org/)
-
-### **Community & Support**
-
-- [R Community](https://www.r-project.org/contributors.html)
-- [RStudio Community](https://community.rstudio.com/)
-- [R-bloggers](https://www.r-bloggers.com/)
-- [Stack Overflow R Tag](https://stackoverflow.com/questions/tagged/r)
+MIT © Satvik Praveen. See
+[`LICENSE.md`](https://satvikpraveen.github.io/R-Data-Science-Compendium/LICENSE.md).
 
 # Package index
 
