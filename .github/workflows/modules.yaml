@@ -1,0 +1,52 @@
+# Run every tutorial module, render the case studies and initialise the Shiny
+# apps (modules/check-modules.R). Scheduled weekly as well, because this code
+# depends on ~150 CRAN packages whose updates can break it.
+on:
+  push:
+    branches: [main]
+    paths: ["modules/**", "shiny-apps/**", ".github/workflows/modules.yaml"]
+  pull_request:
+    paths: ["modules/**", "shiny-apps/**", ".github/workflows/modules.yaml"]
+  schedule:
+    - cron: "0 5 * * 1"
+  workflow_dispatch:
+
+name: modules
+
+permissions: read-all
+
+jobs:
+  modules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Discover module dependencies
+        id: deps
+        run: |
+          pkgs <- system2("Rscript", c("modules/install-dependencies.R", "--list"), stdout = TRUE)
+          cran <- rownames(available.packages(repos = "https://cloud.r-project.org"))
+          missing <- setdiff(pkgs, cran)
+          if (length(missing)) message("Not on CRAN (skipped): ", paste(missing, collapse = ", "))
+          pkgs <- intersect(pkgs, cran)
+          cat(sprintf("pkgs=%s\n", paste0("any::", pkgs, collapse = " ")),
+              file = Sys.getenv("GITHUB_OUTPUT"), append = TRUE)
+        shell: Rscript {0}
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          dependencies: '"hard"'
+          extra-packages: ${{ steps.deps.outputs.pkgs }}
+          cache-version: modules-1
+
+      - name: Run modules, case studies and apps
+        run: Rscript modules/check-modules.R
