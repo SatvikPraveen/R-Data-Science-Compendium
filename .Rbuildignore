@@ -1,99 +1,31 @@
-# R Data Science Portfolio - R Build Ignore Configuration
-# ========================================================
-
-# Git and Version Control
-^\.git$
-^\.gitignore$
-^\.gitattributes$
-^\.github$
-
-# RStudio Project Files
 ^.*\.Rproj$
 ^\.Rproj\.user$
-
-# Documentation and README
+^\.Rprofile$
+^\.lintr$
+^\.github$
+^\.vscode$
+^LICENSE\.md$
 ^README\.Rmd$
-^README\.html$
-^NEWS\.md$
-^CHANGELOG\.md$
-^CODE_OF_CONDUCT\.md$
+^CITATION\.cff$
 ^CONTRIBUTING\.md$
-
-# CI/CD Configuration
-^\.travis\.yml$
-^\.github/workflows/
-^appveyor\.yml$
+^CODE_OF_CONDUCT\.md$
+^PROJECT_STRUCTURE\.md$
 ^codecov\.yml$
-^\.coveralls\.yml$
-
-# Development Files
-^Makefile$
-^makefile$
-^GNUmakefile$
-
-# Docker and Containerization
-^Dockerfile$
-^docker-compose\.yml$
-^\.dockerignore$
-
-# Package Development
-^cran-comments\.md$
-^CRAN-RELEASE$
-^revdep$
-^pkgdown$
 ^_pkgdown\.yml$
 ^docs$
-
-# Environment Management
+^pkgdown$
+^Makefile$
+^setup\.R$
+^setup\.sh$
+^dev-helpers\.sh$
+^docker$
+^docker-compose\.yml$
+^\.dockerignore$
 ^renv$
 ^renv\.lock$
-^\.Rprofile$
-^\.Renviron$
-
-# Data Directories (exclude from package)
-^data/raw$
-^data/external$
-^data/temp$
-^data/processed$
-
-# Output Directories
-^output$
-^results$
-^reports$
-^plots$
-^figures$
-^cache$
-
-# Analysis and Notebook Files
+^modules$
 ^analysis$
-^notebooks$
 ^shiny-apps$
-
-# Testing and Coverage
-^tests/testthat\.R$
-^\.coverage$
-^coverage$
-
-# Benchmarking and Performance
-^benchmarks$
-^profiling$
-
-# Temporary Files
-^\.tmp$
-^tmp$
-^temp$
-
-# IDE Files
-^\.vscode$
-^\.idea$
-
-# OS Files
-^\.DS_Store$
-^Thumbs\.db$
-
-# Logs
-^.*\.log$
-
-# Local Configuration
-^\.local$
-^config/local$
+^data$
+^.*\.tar\.gz$
+^.*\.Rcheck$

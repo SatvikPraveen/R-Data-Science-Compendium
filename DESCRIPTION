@@ -1,29 +1,41 @@
 Package: RDataScienceCompendium
-Title: Comprehensive R Data Science Portfolio
-Version: 1.0.0
+Title: Reproducible Resampling, Simulation and Model-Evaluation Methods
+Version: 0.2.0
 Authors@R: 
-    person("Portfolio", "Developer", , "developer@example.com", role = c("aut", "cre"))
-Description: A comprehensive showcase of R programming skills through practical 
-    data science applications, covering everything from basic syntax to advanced 
-    statistical modeling and machine learning.
+    person("Satvik", "Praveen", , "satvikpraveen707@gmail.com", role = c("aut", "cre", "cph"))
+Description: A research compendium of rigorously tested implementations of
+    core statistical methods for applied data science: nonparametric bootstrap
+    confidence intervals (percentile, basic, normal and bias-corrected and
+    accelerated; Efron 1987 <doi:10.1080/01621459.1987.10478410>), Monte Carlo
+    and exact permutation tests with valid p-values (Phipson and Smyth 2010
+    <doi:10.2202/1544-6115.1585>), standardised effect sizes with exact
+    noncentral-t confidence intervals, a reproducible framework for simulation
+    studies that reports performance measures with Monte Carlo standard errors
+    (Morris, White and Crowther 2019 <doi:10.1002/sim.8086>), and honest model
+    evaluation via stratified, grouped and nested cross-validation together with
+    discrimination and calibration metrics (DeLong, DeLong and Clarke-Pearson
+    1988 <doi:10.2307/2531595>).
 License: MIT + file LICENSE
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+URL: https://github.com/SatvikPraveen/R-Data-Science-Compendium,
+    https://satvikpraveen.github.io/R-Data-Science-Compendium/
+BugReports: https://github.com/SatvikPraveen/R-Data-Science-Compendium/issues
 Depends: 
-    R (>= 4.2.0)
+    R (>= 4.1.0)
 Imports:
-    dplyr,
-    ggplot2,
-    readr,
-    tidyr,
-    caret,
-    shiny,
-    plotly,
-    DT
+    parallel,
+    stats,
+    utils
 Suggests: 
-    testthat (>= 3.0.0),
+    boot,
+    future,
+    future.apply,
     knitr,
-    rmarkdown
-Config/testthat/edition: 3
+    rmarkdown,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
+Config/testthat/edition: 3
+Config/testthat/parallel: false
+Encoding: UTF-8
+Language: en-GB
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.1.0
