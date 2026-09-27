@@ -26,7 +26,7 @@ vignettes/*_cache/
 # Analysis: raw inputs and caches are not tracked; derived results are
 analysis/**/*_cache/
 analysis/**/*_files/
-analysis/paper/*.html
+!analysis/paper/paper.html
 analysis/paper/*.pdf
 analysis/paper/*.tex
 analysis/paper/*.log
