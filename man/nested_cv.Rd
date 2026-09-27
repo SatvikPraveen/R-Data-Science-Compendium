@@ -41,10 +41,12 @@ a column name or a vector of length \code{nrow(data)}; see \code{\link[=make_fol
 \item{seed}{Optional seed; the caller's RNG state is restored on exit.}
 }
 \value{
-An object of class \code{rdsc_nested_cv} with elements \code{estimate} and
-\code{se} (nested), \code{naive_estimate}, \code{naive_choice}, \code{outer} (per-fold
-results including the selected candidate), and \code{inner} (all inner-loop
-scores).
+An object of class \code{rdsc_nested_cv} with elements \code{estimate},
+\code{pooled_estimate} and \code{se} (nested), \code{naive_estimate},
+\code{naive_pooled_estimate}, \code{naive_choice}, \code{candidate_cv} (fold-averaged
+score of every candidate), \code{outer} (per-fold results including the
+selected candidate), \code{inner} (all inner-loop scores) and \code{predictions}
+(outer out-of-fold predictions of the selected models).
 }
 \description{
 Estimates the generalisation performance of a procedure that \emph{selects}
@@ -63,6 +65,11 @@ For comparison the function also reports the \strong{naive} estimate: the best
 candidate's score from an ordinary cross-validation on the full data using
 the outer partition. The difference \code{naive - nested} estimates the
 optimism of the naive approach.
+
+Both are reported fold-averaged (\code{estimate}, \code{naive_estimate}) and pooled
+over all outer out-of-fold predictions (\code{pooled_estimate},
+\code{naive_pooled_estimate}); see \code{\link[=cross_validate]{cross_validate()}} for why the two differ for
+metrics such as RMSE.
 }
 \examples{
 cands <- list(

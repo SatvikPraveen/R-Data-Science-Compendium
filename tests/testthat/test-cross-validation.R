@@ -9,6 +9,22 @@ test_that("leave-one-out CV matches the closed-form PRESS statistic", {
                unname(sort(abs(loo_resid))))
 })
 
+test_that("pooled LOOCV RMSE is the square root of PRESS / n", {
+  cv <- cross_validate(mtcars, fit_lm, outcome = "mpg", metric = rmse,
+                       k = nrow(mtcars), seed = 1)
+  m <- fit_lm(mtcars)
+  press <- sum((residuals(m) / (1 - hatvalues(m)))^2)
+  expect_equal(cv$pooled_estimate, sqrt(press / nrow(mtcars)))
+  # Fold-averaged RMSE with single-observation folds is the MAE instead.
+  expect_equal(cv$estimate, mean(abs(residuals(m) / (1 - hatvalues(m)))))
+  expect_lt(cv$estimate, cv$pooled_estimate)
+})
+
+test_that("pooled and fold-averaged estimates agree for MAE with equal folds", {
+  cv <- cross_validate(mtcars, fit_lm, "mpg", metric = mae, k = 4, seed = 1)
+  expect_equal(cv$estimate, cv$pooled_estimate)
+})
+
 test_that("cross_validate returns per-fold results and OOF predictions", {
   cv <- cross_validate(mtcars, fit_lm, "mpg", k = 4, repeats = 3, seed = 2)
   expect_s3_class(cv, "rdsc_cv")
@@ -61,6 +77,14 @@ test_that("nested CV selects per outer fold and reports naive optimism", {
   expect_equal(nrow(ncv$inner), 12)
   expect_true(all(ncv$outer$selected %in% names(cands)))
   expect_equal(ncv$naive_estimate, min(ncv$candidate_cv))
+  expect_false(anyNA(ncv$predictions$pred))
+  expect_equal(ncv$pooled_estimate,
+               rmse(ncv$predictions$truth, ncv$predictions$pred))
+  # With a single candidate, nested and naive CV coincide.
+  one <- nested_cv(mtcars, cands["wt"], "mpg", outer_k = 4, inner_k = 4,
+                   seed = 3)
+  expect_equal(one$estimate, one$naive_estimate)
+  expect_equal(one$pooled_estimate, one$naive_pooled_estimate)
   expect_output(print(ncv), "Nested")
 })
 

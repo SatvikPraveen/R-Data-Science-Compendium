@@ -41,8 +41,9 @@ a vector of length \code{nrow(data)}; see \code{\link[=make_folds]{make_folds()}
 \item{seed}{Optional seed; the caller's RNG state is restored on exit.}
 }
 \value{
-An object of class \code{rdsc_cv} with elements \code{estimate}, \code{se},
-\code{folds} (per-fold metrics), \code{predictions} (out-of-fold predictions for
+An object of class \code{rdsc_cv} with elements \code{estimate}
+(fold-averaged), \code{pooled_estimate}, \code{se}, \code{folds} (per-fold metrics),
+\code{predictions} (out-of-fold predictions for
 every repeat), \code{k} and \code{repeats}.
 }
 \description{
@@ -57,6 +58,17 @@ inside \code{fit} is re-estimated within every training fold. Performing such
 steps on the full data before cross-validation leaks information and
 biases the estimate optimistically (Hastie, Tibshirani and Friedman 2009,
 Section 7.10.2).
+
+\strong{Fold-averaged versus pooled estimates.} \code{estimate} is the mean of the
+per-fold metrics. \code{pooled_estimate} evaluates the metric once on all
+out-of-fold predictions (per repeat, then averaged over repeats). The two
+coincide for metrics that are means of per-observation losses (MAE, MSE,
+Brier score, log loss) when folds are of equal size, but not for nonlinear
+summaries. Averaging fold-level RMSE, for example, is biased downwards by
+Jensen's inequality when test folds are small; the pooled RMSE is the
+square root of the cross-validated MSE and does not have this bias
+(Forman and Scholz 2010). For AUC, pooling can instead be distorted by
+differences in calibration between fold models, so report both.
 
 The reported \code{se} is the naive standard error
 \eqn{\mathrm{sd}(\text{fold metrics}) / \sqrt{kR}}, which treats fold
@@ -73,6 +85,10 @@ cv
 Hastie, T., Tibshirani, R. and Friedman, J. (2009). \emph{The Elements of
 Statistical Learning} (2nd ed.). Springer.
 \doi{10.1007/978-0-387-84858-7}
+
+Forman, G. and Scholz, M. (2010). Apples-to-apples in cross-validation
+studies: pitfalls in classifier performance measurement. \emph{ACM SIGKDD
+Explorations Newsletter}, 12(1), 49--57. \doi{10.1145/1882471.1882479}
 
 Bengio, Y. and Grandvalet, Y. (2004). No unbiased estimator of the
 variance of k-fold cross-validation. \emph{Journal of Machine Learning

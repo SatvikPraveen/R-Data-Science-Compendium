@@ -12,6 +12,17 @@
 #' biases the estimate optimistically (Hastie, Tibshirani and Friedman 2009,
 #' Section 7.10.2).
 #'
+#' **Fold-averaged versus pooled estimates.** `estimate` is the mean of the
+#' per-fold metrics. `pooled_estimate` evaluates the metric once on all
+#' out-of-fold predictions (per repeat, then averaged over repeats). The two
+#' coincide for metrics that are means of per-observation losses (MAE, MSE,
+#' Brier score, log loss) when folds are of equal size, but not for nonlinear
+#' summaries. Averaging fold-level RMSE, for example, is biased downwards by
+#' Jensen's inequality when test folds are small; the pooled RMSE is the
+#' square root of the cross-validated MSE and does not have this bias
+#' (Forman and Scholz 2010). For AUC, pooling can instead be distorted by
+#' differences in calibration between fold models, so report both.
+#'
 #' The reported `se` is the naive standard error
 #' \eqn{\mathrm{sd}(\text{fold metrics}) / \sqrt{kR}}, which treats fold
 #' estimates as independent. Because training sets overlap it typically
@@ -32,14 +43,19 @@
 #'   a vector of length `nrow(data)`; see [make_folds()].
 #' @param seed Optional seed; the caller's RNG state is restored on exit.
 #'
-#' @return An object of class `rdsc_cv` with elements `estimate`, `se`,
-#'   `folds` (per-fold metrics), `predictions` (out-of-fold predictions for
+#' @return An object of class `rdsc_cv` with elements `estimate`
+#'   (fold-averaged), `pooled_estimate`, `se`, `folds` (per-fold metrics),
+#'   `predictions` (out-of-fold predictions for
 #'   every repeat), `k` and `repeats`.
 #'
 #' @references
 #' Hastie, T., Tibshirani, R. and Friedman, J. (2009). *The Elements of
 #' Statistical Learning* (2nd ed.). Springer.
 #' \doi{10.1007/978-0-387-84858-7}
+#'
+#' Forman, G. and Scholz, M. (2010). Apples-to-apples in cross-validation
+#' studies: pitfalls in classifier performance measurement. *ACM SIGKDD
+#' Explorations Newsletter*, 12(1), 49--57. \doi{10.1145/1882471.1882479}
 #'
 #' Bengio, Y. and Grandvalet, Y. (2004). No unbiased estimator of the
 #' variance of k-fold cross-validation. *Journal of Machine Learning
@@ -72,6 +88,7 @@ cross_validate <- function(data, fit, outcome, metric = rmse,
   with_seed(seed, {
     per_fold <- vector("list", repeats)
     preds <- vector("list", repeats)
+    pooled <- numeric(repeats)
     for (r in seq_len(repeats)) {
       folds <- make_folds(n, k, strata = strata, groups = groups)
       oof <- rep(NA_real_, n)
@@ -83,6 +100,7 @@ cross_validate <- function(data, fit, outcome, metric = rmse,
         oof[test] <- p
         scores[j] <- metric(data[[outcome]][test], p)
       }
+      pooled[r] <- metric(data[[outcome]], oof)
       per_fold[[r]] <- data.frame(repeat_id = r, fold = seq_len(k),
                                   n_test = as.vector(table(factor(folds, seq_len(k)))),
                                   metric = scores)
@@ -93,6 +111,7 @@ cross_validate <- function(data, fit, outcome, metric = rmse,
     structure(
       list(
         estimate = mean(folds_df$metric),
+        pooled_estimate = mean(pooled),
         se = stats::sd(folds_df$metric) / sqrt(nrow(folds_df)),
         folds = folds_df,
         predictions = do.call(rbind, preds),
@@ -124,6 +143,11 @@ cross_validate <- function(data, fit, outcome, metric = rmse,
 #' the outer partition. The difference `naive - nested` estimates the
 #' optimism of the naive approach.
 #'
+#' Both are reported fold-averaged (`estimate`, `naive_estimate`) and pooled
+#' over all outer out-of-fold predictions (`pooled_estimate`,
+#' `naive_pooled_estimate`); see [cross_validate()] for why the two differ for
+#' metrics such as RMSE.
+#'
 #' @inheritParams cross_validate
 #' @param candidates A named list of fitting functions `function(train)`.
 #' @param outer_k,inner_k Number of outer and inner folds.
@@ -131,10 +155,12 @@ cross_validate <- function(data, fit, outcome, metric = rmse,
 #' @param strata Optional stratification for the outer and inner partitions:
 #'   a column name or a vector of length `nrow(data)`; see [make_folds()].
 #'
-#' @return An object of class `rdsc_nested_cv` with elements `estimate` and
-#'   `se` (nested), `naive_estimate`, `naive_choice`, `outer` (per-fold
-#'   results including the selected candidate), and `inner` (all inner-loop
-#'   scores).
+#' @return An object of class `rdsc_nested_cv` with elements `estimate`,
+#'   `pooled_estimate` and `se` (nested), `naive_estimate`,
+#'   `naive_pooled_estimate`, `naive_choice`, `candidate_cv` (fold-averaged
+#'   score of every candidate), `outer` (per-fold results including the
+#'   selected candidate), `inner` (all inner-loop scores) and `predictions`
+#'   (outer out-of-fold predictions of the selected models).
 #'
 #' @references
 #' Varma, S. and Simon, R. (2006). Bias in error estimation when using
@@ -172,9 +198,11 @@ nested_cv <- function(data, candidates, outcome, metric = rmse,
   n <- nrow(data)
   best_of <- if (minimize) which.min else which.max
 
+  predict_fold <- function(fitter, train, test) {
+    as.numeric(predict_fun(fitter(train), test))
+  }
   score_fold <- function(fitter, train, test) {
-    model <- fitter(train)
-    metric(test[[outcome]], as.numeric(predict_fun(model, test)))
+    metric(test[[outcome]], predict_fold(fitter, train, test))
   }
 
   with_seed(seed, {
@@ -183,6 +211,9 @@ nested_cv <- function(data, candidates, outcome, metric = rmse,
     inner_rows <- vector("list", outer_k)
     naive_scores <- matrix(NA_real_, outer_k, length(candidates),
                            dimnames = list(NULL, names(candidates)))
+    oof_candidates <- matrix(NA_real_, n, length(candidates),
+                             dimnames = list(NULL, names(candidates)))
+    oof_selected <- rep(NA_real_, n)
 
     for (j in seq_len(outer_k)) {
       test_idx <- which(outer == j)
@@ -200,8 +231,13 @@ nested_cv <- function(data, candidates, outcome, metric = rmse,
       }, numeric(1))
       chosen <- names(candidates)[best_of(inner_scores)]
 
-      naive_scores[j, ] <- vapply(candidates, score_fold, numeric(1),
-                                  train = train, test = test)
+      for (cand in names(candidates)) {
+        oof_candidates[test_idx, cand] <- predict_fold(candidates[[cand]],
+                                                       train, test)
+        naive_scores[j, cand] <- metric(test[[outcome]],
+                                        oof_candidates[test_idx, cand])
+      }
+      oof_selected[test_idx] <- oof_candidates[test_idx, chosen]
 
       outer_rows[[j]] <- data.frame(
         fold = j, n_test = length(test_idx), selected = chosen,
@@ -216,16 +252,22 @@ nested_cv <- function(data, candidates, outcome, metric = rmse,
     outer_df <- do.call(rbind, outer_rows)
     naive_means <- colMeans(naive_scores)
     naive_choice <- names(candidates)[best_of(naive_means)]
+    y <- data[[outcome]]
+    naive_pooled <- apply(oof_candidates, 2L, function(p) metric(y, p))
 
     structure(
       list(
         estimate = mean(outer_df$outer_score),
+        pooled_estimate = metric(y, oof_selected),
         se = stats::sd(outer_df$outer_score) / sqrt(outer_k),
         naive_estimate = naive_means[[naive_choice]],
+        naive_pooled_estimate = naive_pooled[[best_of(naive_pooled)]],
         naive_choice = naive_choice,
         candidate_cv = naive_means,
         outer = outer_df,
         inner = do.call(rbind, inner_rows),
+        predictions = data.frame(row = seq_len(n), fold = outer, truth = y,
+                                 pred = oof_selected),
         outer_k = outer_k,
         inner_k = inner_k,
         minimize = minimize
@@ -275,9 +317,10 @@ resolve_column <- function(x, data, arg) {
 print.rdsc_cv <- function(x, digits = 4L, ...) {
   cat(sprintf("%d-fold cross-validation, %d repeat(s)\n", x$k, x$repeats))
   cat(sprintf("  metric: %s\n", x$metric))
-  cat(sprintf("  estimate = %s (naive SE %s)\n",
+  cat(sprintf("  estimate = %s (naive SE %s); pooled = %s\n",
               format(x$estimate, digits = digits),
-              format(x$se, digits = digits)))
+              format(x$se, digits = digits),
+              format(x$pooled_estimate, digits = digits)))
   invisible(x)
 }
 
@@ -290,6 +333,9 @@ print.rdsc_nested_cv <- function(x, digits = 4L, ...) {
               format(x$se, digits = digits)))
   cat(sprintf("  naive estimate  = %s (best candidate: %s)\n",
               format(x$naive_estimate, digits = digits), x$naive_choice))
+  cat(sprintf("  pooled: nested = %s, naive = %s\n",
+              format(x$pooled_estimate, digits = digits),
+              format(x$naive_pooled_estimate, digits = digits)))
   sel <- table(x$outer$selected)
   cat("  selected in outer folds:",
       paste(sprintf("%s (%d)", names(sel), as.vector(sel)), collapse = ", "),
