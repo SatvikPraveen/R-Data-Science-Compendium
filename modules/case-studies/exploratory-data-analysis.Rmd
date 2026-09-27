@@ -24,9 +24,12 @@ knitr::opts_chunk$set(
   warning = FALSE, 
   message = FALSE,
   fig.align = "center",
-  cache = TRUE,
+  cache = FALSE,
   dpi = 300
 )
+
+# Fixed analysis date so that results do not depend on the render date
+analysis_date <- as.Date("2024-12-31")
 
 # Load required libraries
 library(dplyr)
@@ -68,11 +71,11 @@ This comprehensive exploratory data analysis demonstrates advanced EDA technique
 
 ## Key Findings
 
-- **Customer Segmentation**: Clear behavioral differences across customer segments
-- **Seasonal Patterns**: Strong Q4 revenue surge with monthly cyclical patterns
-- **Product Performance**: Electronics and clothing dominate sales volume
-- **Geographic Insights**: North American customers show highest engagement
-- **Data Quality**: 95%+ completeness with identified outliers requiring attention
+The dataset is **simulated** by `generate_comprehensive_business_data()` in
+`modules/utils/data-generators.R`, with a fixed seed and analysis date, so the
+patterns found reflect the simulation's design rather than a real business.
+The findings, with the numbers behind them, are computed in the
+[summary](#summary-of-findings) at the end.
 
 ---
 
@@ -309,7 +312,7 @@ do.call(grid.arrange, c(categorical_plots, ncol = 2))
 # Select numeric variables for correlation
 correlation_vars <- analysis_data %>%
   select_if(is.numeric) %>%
-  select(-customer_id, -product_id, -transaction_id) %>%
+  select(-any_of(c("customer_id", "product_id", "transaction_id"))) %>%
   names()
 
 # Calculate correlation matrix
@@ -758,21 +761,79 @@ do.call(grid.arrange, c(outlier_plots, ncol = length(outlier_plots)))
 
 ## Summary of Findings
 
+```{r findings, include = FALSE}
+all_tables <- list(customers, products, transactions)
+completeness <- 1 - sum(sapply(all_tables, function(d) sum(is.na(d)))) /
+  sum(sapply(all_tables, function(d) nrow(d) * ncol(d)))
+
+seg <- analysis_data %>%
+  group_by(customer_segment) %>%
+  summarise(rev_per_txn = mean(total_amount),
+            satisfaction = mean(satisfaction_score, na.rm = TRUE),
+            .groups = "drop")
+seg_top <- seg$customer_segment[which.max(seg$rev_per_txn)]
+seg_low <- seg$customer_segment[which.min(seg$rev_per_txn)]
+seg_ratio <- max(seg$rev_per_txn) / min(seg$rev_per_txn)
+sat_test <- kruskal.test(satisfaction_score ~ customer_segment, data = customers)
+sat_top <- seg$customer_segment[which.max(seg$satisfaction)]
+
+cat_rev <- analysis_data %>%
+  group_by(category) %>%
+  summarise(revenue = sum(total_amount), .groups = "drop") %>%
+  mutate(share = revenue / sum(revenue)) %>%
+  arrange(desc(share))
+
+price_rating <- cor.test(products$price, products$avg_rating, method = "spearman",
+                         exact = FALSE)
+
+country_rev <- analysis_data %>%
+  group_by(country) %>%
+  summarise(rev_per_customer = sum(total_amount) / n_distinct(customer_id),
+            .groups = "drop") %>%
+  arrange(desc(rev_per_customer))
+
+q4_revenue_share <- with(analysis_data,
+  sum(total_amount[lubridate::quarter(transaction_date) == 4]) / sum(total_amount))
+
+# Accounting identities that every transaction should satisfy (to the cent)
+identity_ok <- with(transactions,
+  abs(subtotal - quantity * unit_price) < 0.01 &
+  abs(total_amount - (subtotal + shipping_cost + tax_amount)) < 0.011)
+identity_share <- mean(identity_ok, na.rm = TRUE)
+
+amt <- analysis_data$total_amount
+outlier_share <- mean(amt > quantile(amt, 0.75) + 3 * IQR(amt))
+
+pct <- function(x) scales::percent(x, accuracy = 0.1)
+```
+
 ### 🎯 **Customer Insights**
-1. **Segment Differentiation**: Clear behavioral and value differences across customer segments
-2. **Premium Value**: Premium customers drive disproportionate revenue per transaction
-3. **Satisfaction Correlation**: Higher-tier segments show increased satisfaction scores
-4. **Geographic Concentration**: North American customers represent highest engagement
+1. **Segment value**: revenue per transaction is highest for `r seg_top` and
+   lowest for `r seg_low` customers, a ratio of `r sprintf("%.2f", seg_ratio)`.
+2. **Satisfaction**: mean satisfaction is highest in the `r sat_top` segment.
+   Differences between segments have a Kruskal-Wallis p-value of
+   `r format.pval(sat_test$p.value, digits = 2, eps = 0.001)`.
+3. **Geography**: revenue per customer is highest in `r country_rev$country[1]`
+   and lowest in `r country_rev$country[nrow(country_rev)]`.
 
 ### 📊 **Product Insights**
-1. **Category Performance**: Electronics and Clothing dominate both revenue and volume
-2. **Price-Rating Relationship**: Moderate positive correlation between price and customer ratings
-3. **Seasonal Patterns**: Strong Q4 performance with consistent monthly growth trends
+1. **Category performance**: `r cat_rev$category[1]` and `r cat_rev$category[2]`
+   account for `r pct(sum(cat_rev$share[1:2]))` of revenue across
+   `r nrow(cat_rev)` categories.
+2. **Price and rating**: the Spearman correlation between price and average
+   rating is `r sprintf("%.2f", price_rating$estimate)`
+   (p = `r format.pval(price_rating$p.value, digits = 2, eps = 0.001)`).
+3. **Seasonality**: Q4 accounts for `r pct(q4_revenue_share)` of revenue,
+   against 25% if revenue were spread evenly across the year.
 
 ### ⚠️ **Data Quality Observations**
-1. **Completeness**: Excellent data quality with minimal missing values (<5%)
-2. **Outliers**: Some extreme values in transaction amounts requiring investigation
-3. **Consistency**: Logical relationships between related variables confirmed
+1. **Completeness**: `r pct(completeness)` of all cells in the customer,
+   product and transaction tables are non-missing.
+2. **Outliers**: `r pct(outlier_share)` of completed transactions exceed
+   Q3 + 3 × IQR in total amount and deserve a closer look.
+3. **Consistency**: `r pct(identity_share)` of transactions satisfy the
+   identities subtotal = quantity × unit price and
+   total = subtotal + shipping + tax (to the cent).
 
 ## Business Recommendations
 
