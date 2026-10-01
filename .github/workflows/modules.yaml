@@ -38,7 +38,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Cache the R library
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ${{ env.R_LIBS_USER }}
           key: modules-${{ runner.os }}-r-${{ hashFiles('modules/**/*.R', 'modules/**/*.Rmd', 'shiny-apps/**/*.R') }}
