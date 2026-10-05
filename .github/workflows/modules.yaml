@@ -59,6 +59,10 @@ jobs:
           todo <- setdiff(intersect(pkgs, cran), rownames(installed.packages()))
           message("Installing ", length(todo), " packages")
           if (length(todo)) pak::pkg_install(todo, upgrade = FALSE, ask = FALSE)
+          # Packages restored from the cache skip pak's install step, so their
+          # Ubuntu system libraries (e.g. libglpk for igraph) are not on a fresh
+          # runner. Install any that are missing for the whole library.
+          pak::sysreqs_fix_installed()
         shell: Rscript {0}
 
       - name: Run modules, case studies and apps
