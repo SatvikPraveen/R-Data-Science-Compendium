@@ -89,7 +89,7 @@ res <- run_simulation(generate, analyse, n_sim = 500, scenarios = scenarios,
 res$theta <- exp(res$sigma^2 / 2)
 res
 #> <rdsc_simulation> 8000 result rows from 4 scenario(s) x 500 replicates
-#> seed = 20240901, backend = sequential, elapsed = 11.9 s, failures = 0
+#> seed = 20240901, backend = sequential, elapsed = 9.7 s, failures = 0
 #> 
 #>    n sigma .scenario .rep     method estimate        se     lower    upper
 #> 1 10   0.5         1    1          t 1.078433 0.1088680 0.8321570 1.324710
